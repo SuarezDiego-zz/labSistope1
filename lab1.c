@@ -168,6 +168,17 @@ Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
 	}
 	return punteroPixel;
 }
+
+Pixel pixel_a_negro(Pixel pix){
+	int ecucion_de_luminiscencia=pix.red*0.3+pix.green*0.59+pix.blue*0.11;
+	Pixel pixel_negro;
+	pixel_negro.red=ecucion_de_luminiscencia;
+	pixel_negro.green=ecucion_de_luminiscencia;
+	pixel_negro.blue=ecucion_de_luminiscencia;
+	printf("%i\n",ecucion_de_luminiscencia);
+	return pixel_negro;
+}
+
 void main(){
 	char** tes=(char**)malloc(6*sizeof(char*));
 	tes[0]="10";
@@ -176,5 +187,6 @@ void main(){
 	tes[3]="12";
 	tes[4]="24";
 	tes[5]="fa";
-	crearArregloPixeles(tes,2);
+	Pixel* puntero=crearArregloPixeles(tes,2);
+	pixel_a_negro(puntero[0]);
 }
