@@ -8,11 +8,28 @@ typedef struct {
 	int blue;
 } Pixel;
 
-char* leerImagen(){
+typedef struct{
+   char** par;
+   char** arregloBytes;
+   char** arregloBytesOrdenado;
+   int cantidadDePares;
+}Estructura;
+
+Estructura* leerImagen(){
+	int x;
+	int i=0;
+	int j=0;
+	char funcion[30];
+	Estructura* arr = (Estructura*)malloc(sizeof(Estructura));
 	FILE *archivoEntrada;
 	char* nombreArchivo="1.bmp";
 	archivoEntrada = fopen(nombreArchivo, "rb");
-	int auxInt;
+	int auxInt;	
+	char **par = (char **) malloc(sizeof(char *)*1000);
+	for(x=0;x<1000;x++){
+        par[x]=(char *) malloc(sizeof(char)*1000);
+	}
+    arr->par = par;	
 	char* textoStr=(char*)malloc(10000*sizeof(char));
 	char* auxStr=(char*)malloc(10*sizeof(char));
 	memset(textoStr,0,strlen(textoStr));
@@ -20,11 +37,62 @@ char* leerImagen(){
     	auxInt = fgetc(archivoEntrada);
     	sprintf(auxStr,"%02x",auxInt);
     	strcat(textoStr,auxStr);
+    	strcpy(par[j], auxStr);
+    	//printf("%s\n", par[j]);
+    	j++;
+	//printf("%s \n", auxStr);
 	}
+	for (int k = 0; k < j; ++k)
+	{
+		//printf("%s asd\n", par[k]);
+	}
+	arr->cantidadDePares = j;
 	int largo =strlen(textoStr);
 	textoStr[largo-8]='\0';// le quita los f demas
-	return textoStr;
+	//printf("%s\n", textoStr);
+	//printf("llega.\n");
+	return arr;
+	
 }
+
+Estructura* cortarArreglo(Estructura* estr){
+	int a;
+	char **arregloBytes = (char **) malloc(sizeof(char *)*1000);
+	for(int x=0;x<1000;x++){
+        arregloBytes[x]=(char *) malloc(sizeof(char)*1000);
+	}
+	for (int i = 54; i < estr->cantidadDePares; ++i)
+	{
+		strcpy(arregloBytes[a], estr->par[i]);
+		a++;
+	}
+	estr->cantidadDePares = estr->cantidadDePares - 56;
+	for (int k = 0; k < estr->cantidadDePares; ++k)
+	{
+		//printf("%s\n", arregloBytes[k]);
+	}
+	estr->arregloBytes = arregloBytes;
+	return estr;
+}
+
+Estructura* invertirArreglo(Estructura* estr){
+	int j=0;
+	char **arregloBytesOrdenado = (char **) malloc(sizeof(char *)*estr->cantidadDePares);
+	for(int x=0;x<1000;x++){
+        arregloBytesOrdenado[x]=(char *) malloc(sizeof(char)*3);
+	}
+	for (int i = estr->cantidadDePares-1 ; i >= 0; i--)
+	{
+		strcpy(arregloBytesOrdenado[j], estr->arregloBytes[i]);
+		j++;
+	}
+	for (int k = 0; k < estr->cantidadDePares-1; ++k)
+	{
+		printf("%s\n", arregloBytesOrdenado[k]);
+	}
+	return estr;
+}
+
 
 int stringAHexadecimal(char* stringEntrada){
 	int numeroHexa=0;
