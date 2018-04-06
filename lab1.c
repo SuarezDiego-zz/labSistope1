@@ -16,13 +16,13 @@ typedef struct{
 }Estructura;
 
 Estructura* leerImagen(){
-	int x;
+	int x,k;
 	int i=0;
 	int j=0;
 	char funcion[30];
 	Estructura* arr = (Estructura*)malloc(sizeof(Estructura));
 	FILE *archivoEntrada;
-	char* nombreArchivo="1.bmp";
+	char* nombreArchivo="x.bmp";
 	archivoEntrada = fopen(nombreArchivo, "rb");
 	int auxInt;	
 	char **par = (char **) malloc(sizeof(char *)*1000);
@@ -42,32 +42,35 @@ Estructura* leerImagen(){
     	j++;
 	//printf("%s \n", auxStr);
 	}
-	for (int k = 0; k < j; ++k)
+	par[j-1]='\0';
+	for (k = 0; k < j; ++k)
 	{
 		//printf("%s asd\n", par[k]);
 	}
-	arr->cantidadDePares = j;
-	int largo =strlen(textoStr);
-	textoStr[largo-8]='\0';// le quita los f demas
+	arr->cantidadDePares = j-1;
+	//int largo =strlen(textoStr);
+	//textoStr[largo-10]='\0';// le quita los f demas
 	//printf("%s\n", textoStr);
 	//printf("llega.\n");
 	return arr;
-	
 }
 
 Estructura* cortarArreglo(Estructura* estr){
-	int a;
+	int a=0;
+	int i,k,x;
 	char **arregloBytes = (char **) malloc(sizeof(char *)*1000);
-	for(int x=0;x<1000;x++){
+	for(x=0;x<1000;x++){
         arregloBytes[x]=(char *) malloc(sizeof(char)*1000);
 	}
-	for (int i = 54; i < estr->cantidadDePares; ++i)
+	for (i = 53; i < estr->cantidadDePares; ++i)//veeeeeeeeeeeeeeeer
 	{
 		strcpy(arregloBytes[a], estr->par[i]);
+		printf("%s\n",arregloBytes[a]);
 		a++;
+		
 	}
 	estr->cantidadDePares = estr->cantidadDePares - 56;
-	for (int k = 0; k < estr->cantidadDePares; ++k)
+	for (k = 0; k < estr->cantidadDePares; ++k)
 	{
 		//printf("%s\n", arregloBytes[k]);
 	}
@@ -77,22 +80,19 @@ Estructura* cortarArreglo(Estructura* estr){
 
 Estructura* invertirArreglo(Estructura* estr){
 	int j=0;
+	int i;
+	printf("%i\n",estr->cantidadDePares);
 	char **arregloBytesOrdenado = (char **) malloc(sizeof(char *)*estr->cantidadDePares);
-	for(int x=0;x<1000;x++){
-        arregloBytesOrdenado[x]=(char *) malloc(sizeof(char)*3);
-	}
-	for (int i = estr->cantidadDePares-1 ; i >= 0; i--)
+	for (i = estr->cantidadDePares-1 ; i >= 0; i--)
 	{
+		arregloBytesOrdenado[j]=(char *) malloc(sizeof(char)*3);
 		strcpy(arregloBytesOrdenado[j], estr->arregloBytes[i]);
+		//printf("%s\n",arregloBytesOrdenado[j]);
 		j++;
 	}
-	for (int k = 0; k < estr->cantidadDePares-1; ++k)
-	{
-		printf("%s\n", arregloBytesOrdenado[k]);
-	}
+	estr->arregloBytesOrdenado=arregloBytesOrdenado;
 	return estr;
 }
-
 
 int stringAHexadecimal(char* stringEntrada){
 	int numeroHexa=0;
@@ -233,6 +233,7 @@ Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
 		punteroPixel[i].green=stringAHexadecimal(punteroStr[i*3+1]);
 		punteroPixel[i].blue=stringAHexadecimal(punteroStr[i*3+2]);
 		printf("rojo=%i verde=%i azul=%i\n",punteroPixel[i].red,punteroPixel[i].green,punteroPixel[i].blue);
+		printf("%s %s %s\n",punteroStr[i*3],punteroStr[i*3+1],punteroStr[i*3+2]);
 	}
 	return punteroPixel;
 }
@@ -255,6 +256,15 @@ void main(){
 	tes[3]="12";
 	tes[4]="24";
 	tes[5]="fa";
-	Pixel* puntero=crearArregloPixeles(tes,2);
-	pixel_a_negro(puntero[0]);
+	//Pixel* puntero=crearArregloPixeles(tes,2);
+	//pixel_a_negro(puntero[0]);
+
+	Estructura* es=leerImagen();
+	cortarArreglo(es);
+	invertirArreglo(es);
+	//printf("%s\n",es->par[0]);
+	//printf("%s\n",es->arregloBytes[0]);
+	//printf("%s\n",es->arregloBytesOrdenado[0]);
+	//printf("%i\n",es->cantidadDePares/3);
+	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/3);
 }
