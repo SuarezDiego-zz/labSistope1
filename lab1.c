@@ -235,8 +235,8 @@ Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
 		punteroPixel[i].red=stringAHexadecimal(punteroStr[i*3]);
 		punteroPixel[i].green=stringAHexadecimal(punteroStr[i*3+1]);
 		punteroPixel[i].blue=stringAHexadecimal(punteroStr[i*3+2]);
-		printf("rojo=%i verde=%i azul=%i\n",punteroPixel[i].red,punteroPixel[i].green,punteroPixel[i].blue);
-		printf("%s %s %s\n",punteroStr[i*3],punteroStr[i*3+1],punteroStr[i*3+2]);
+		//printf("rojo=%i verde=%i azul=%i\n",punteroPixel[i].red,punteroPixel[i].green,punteroPixel[i].blue);
+		//printf("%s %s %s\n",punteroStr[i*3],punteroStr[i*3+1],punteroStr[i*3+2]);
 	}
 	return punteroPixel;
 }
@@ -259,58 +259,28 @@ Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles){
 	}
 	return punteroPixelesBlancoYNegro;
 }
+
 void escribirImagen(Pixel* punteroPixeles, Estructura* est){
 	int i;
-	int j=0;
-	int x=0;
-	FILE *archivoEntrada;
+	long x;
+	int j=54;
+	unsigned char* punteroFormatoBynario=(unsigned char*)malloc(sizeof(unsigned char)*(est->cantidadDePares+54));
+	FILE *archivoSalida;
 	char* nombreArchivo="blancoYNegro.bmp";
-	archivoEntrada = fopen(nombreArchivo, "wb");
-	for(i=1;i<55;i++){
-		fprintf(archivoEntrada,est->par[i-1]);
-		if(i%2==0 && i%16!=0){
-			fprintf(archivoEntrada," ");
-		}
-		if(i%16==0){
-			fprintf(archivoEntrada,"\n");
-		}
+	archivoSalida = fopen(nombreArchivo, "wb");
+	for(i=0;i<54;i++){
+		punteroFormatoBynario[i]=stringAHexadecimal(est->par[i]);
 	}
-	for(i=0;i<est->cantidadDePares/3;i++){
-		fprintf(archivoEntrada,"%02x",punteroPixeles[i].red);
-		j++;
-		if(j==10){
-			x=1;
-		}
-		if(x==1 && (j-10)%16==0){
-			fprintf(archivoEntrada,"\n");
-		}
-		else if(j%2==0){
-			fprintf(archivoEntrada," ");
-		}
-		fprintf(archivoEntrada,"%02x",punteroPixeles[i].green);
-		j++;
-		if(j==10){
-			x=1;
-		}
-		if(x==1 && (j-10)%16==0){
-			fprintf(archivoEntrada,"\n");
-		}
-		else if(j%2==0){
-			fprintf(archivoEntrada," ");
-		}
-		fprintf(archivoEntrada,"%02x",punteroPixeles[i].blue);
-		j++;
-		if(j==10){
-			x=1;
-		}
-		if(x==1 && (j-10)%16==0){
-			fprintf(archivoEntrada,"\n");
-		}
-		else if(j%2==0){
-			fprintf(archivoEntrada," ");
-		}
+	for (i = (est->cantidadDePares/3)-1 ; i >= 0; i--){
+		punteroFormatoBynario[j+2]=punteroPixeles[i].red;
+		punteroFormatoBynario[j+1]=punteroPixeles[i].green;
+		punteroFormatoBynario[j]=punteroPixeles[i].blue;
+		j=j+3;
 	}
-	close(archivoEntrada);
+	x=punteroFormatoBynario[5]*65536+punteroFormatoBynario[4]*4096+punteroFormatoBynario[3]*256+punteroFormatoBynario[2];
+	printf("%i\n",x);
+	fwrite(punteroFormatoBynario,x,1,archivoSalida);
+	close(archivoSalida);
 }
 
 void main(){
@@ -332,5 +302,6 @@ void main(){
 	//printf("%s\n",es->arregloBytesOrdenado[0]);
 	//printf("%i\n",es->cantidadDePares/3);
 	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/3);
-	escribirImagen(pixeles,es);
+	Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/3);
+	escribirImagen(pixelesbn,es);
 }
