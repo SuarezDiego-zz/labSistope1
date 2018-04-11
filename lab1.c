@@ -283,7 +283,7 @@ void escribirImagen(Pixel* punteroPixeles, Estructura* est){
 	for(i=0;i<54;i++){
 		punteroFormatoBynario[i]=stringAHexadecimal(est->par[i]);
 	}
-	for (i = (est->cantidadDePares/4)-1 ; i >= 0; i--){
+	for (i = (est->cantidadDePares/3)-1 ; i >= 0; i--){
 		//punteroFormatoBynario[j+3]= 255;
 		punteroFormatoBynario[j+2]=punteroPixeles[i].red;
 		punteroFormatoBynario[j+1]=punteroPixeles[i].green;
