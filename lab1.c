@@ -99,7 +99,7 @@ Estructura* invertirArreglo(Estructura* estr){
 	char **arregloBytesOrdenado = (char **) malloc(sizeof(char *)*estr->cantidadDePares);
 	for (i = estr->cantidadDePares-1 ; i >= 0; i--)
 	{
-		arregloBytesOrdenado[j]=(char *) malloc(sizeof(char)*3);
+		arregloBytesOrdenado[j]=(char *) malloc(sizeof(char)*2);
 		strcpy(arregloBytesOrdenado[j], estr->arregloBytes[i]);
 		//printf("%s\n",arregloBytesOrdenado[j]);
 		j++;
@@ -284,10 +284,10 @@ void escribirImagen(Pixel* punteroPixeles, Estructura* est){
 		punteroFormatoBynario[i]=stringAHexadecimal(est->par[i]);
 	}
 	for (i = (est->cantidadDePares/4)-1 ; i >= 0; i--){
-		punteroFormatoBynario[j]= punteroPixeles[i].v;
-		punteroFormatoBynario[j+3]=punteroPixeles[i].red;
-		punteroFormatoBynario[j+2]=punteroPixeles[i].green;
-		punteroFormatoBynario[j+1]=punteroPixeles[i].blue;
+		punteroFormatoBynario[j+3]= 255;
+		punteroFormatoBynario[j+2]=punteroPixeles[i].red;
+		punteroFormatoBynario[j+1]=punteroPixeles[i].green;
+		punteroFormatoBynario[j]=punteroPixeles[i].blue;
 
 		j=j+4;
 	}
