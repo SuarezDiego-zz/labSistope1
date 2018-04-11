@@ -243,10 +243,10 @@ Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
 	int aux;
 	Pixel* punteroPixel=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
 	for(i=0;i<cantidadPixeles;i++){
-		punteroPixel[i].red=stringAHexadecimal(punteroStr[i*3]);
-		punteroPixel[i].green=stringAHexadecimal(punteroStr[i*3+1]);
-		punteroPixel[i].blue=stringAHexadecimal(punteroStr[i*3+2]);
-		punteroPixel[i].v=stringAHexadecimal(punteroStr[i*3+3]);
+		punteroPixel[i].red=stringAHexadecimal(punteroStr[i*4+1]);
+		punteroPixel[i].green=stringAHexadecimal(punteroStr[i*4+2]);
+		punteroPixel[i].blue=stringAHexadecimal(punteroStr[i*4+3]);
+		punteroPixel[i].v=stringAHexadecimal(punteroStr[i*4]);
 		//printf("rojo=%i verde=%i azul=%i\n",punteroPixel[i].red,punteroPixel[i].green,punteroPixel[i].blue);
 		//printf("%s %s %s\n",punteroStr[i*3],punteroStr[i*3+1],punteroStr[i*3+2]);
 	}
@@ -283,13 +283,13 @@ void escribirImagen(Pixel* punteroPixeles, Estructura* est){
 	for(i=0;i<54;i++){
 		punteroFormatoBynario[i]=stringAHexadecimal(est->par[i]);
 	}
-	for (i = (est->cantidadDePares/3)-1 ; i >= 0; i--){
-		//punteroFormatoBynario[j+3]= 255;
-		punteroFormatoBynario[j+2]=punteroPixeles[i].red;
-		punteroFormatoBynario[j+1]=punteroPixeles[i].green;
-		punteroFormatoBynario[j]=punteroPixeles[i].blue;
+	for (i = (est->cantidadDePares/4)-1 ; i >= 0; i--){
+		punteroFormatoBynario[j]= punteroPixeles[i].v;
+		punteroFormatoBynario[j+3]=punteroPixeles[i].red;
+		punteroFormatoBynario[j+2]=punteroPixeles[i].green;
+		punteroFormatoBynario[j+1]=punteroPixeles[i].blue;
 
-		j=j+3;
+		j=j+4;
 	}
 	printf("5 %x\n", punteroFormatoBynario[5]);
 	printf("4 %x\n", punteroFormatoBynario[4]);
