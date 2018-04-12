@@ -73,13 +73,13 @@ Estructura* cortarArreglo(Estructura* estr){
 	for(x=0;x<10000000;x++){
         arregloBytes[x]=(char *) malloc(sizeof(char)*2);
 	}
-	for (i = 54; i < estr->cantidadDePares; ++i)//veeeeeeeeeeeeeeeer2
+	for (i = 138; i < estr->cantidadDePares; ++i)//veeeeeeeeeeeeeeeer2
 	{
 		strcpy(arregloBytes[a], estr->par[i]);
 		//printf("%s\n",arregloBytes[a]);
 		a++;
 	}
-	estr->cantidadDePares = estr->cantidadDePares - 54;
+	estr->cantidadDePares = estr->cantidadDePares - 138;
 	/*
 	for(i=1;i< estr->cantidadDePares+1;i++){
 		printf("%s\n",arregloBytes[i-1]);
@@ -275,12 +275,12 @@ Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles){
 void escribirImagen(Pixel* punteroPixeles, Estructura* est){
 	int i;
 	unsigned long x;
-	int j=54;
+	int j=138;
 	unsigned char* punteroFormatoBynario=(unsigned char*)malloc(sizeof(unsigned char)*(est->cantidadDePares+54));
 	FILE *archivoSalida;
 	char* nombreArchivo="blancoYNegro.bmp";
 	archivoSalida = fopen(nombreArchivo, "wb");
-	for(i=0;i<54;i++){
+	for(i=0;i<138;i++){
 		punteroFormatoBynario[i]=stringAHexadecimal(est->par[i]);
 	}
 	for (i = (est->cantidadDePares/4)-1 ; i >= 0; i--){
