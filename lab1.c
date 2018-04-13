@@ -315,13 +315,12 @@ int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
 	}
 }
 
-void escribirImagen(Pixel* punteroPixeles, Estructura* est){
+void escribirImagen(Pixel* punteroPixeles, Estructura* est,char* nombreArchivo){
 	int i;
 	unsigned long x;
 	int j=138;
 	unsigned char* punteroFormatoSalida=(unsigned char*)malloc(sizeof(unsigned char)*(est->cantidadDePares+54));
 	FILE *archivoSalida;
-	char* nombreArchivo="blancoYNegro.bmp";
 	archivoSalida = fopen(nombreArchivo, "wb");
 	for(i=0;i<138;i++){
 		punteroFormatoSalida[i]=stringAHexadecimal(est->par[i]);
@@ -390,8 +389,11 @@ void main(int argc, char *argv[]){
 	//printf("%s\n",es->arregloBytesOrdenado[0]);
 	//printf("%i\n",es->cantidadDePares/3);
 	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
-	//Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/4);
+	Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/4);
 	Pixel* pixelesbinario=pixeles_binario(pixeles,es->cantidadDePares/4,umbral_b);
+	//printf("%i\n",umbral_b);
+	escribirImagen(pixelesbn,es,"blancoynegro.bmp");
+	escribirImagen(pixelesbinario,es,"binario.bmp");
 	printf("\n\n%i\n\n", nearlyBlack(pixeles,es->cantidadDePares/4,umbral_nb));
-	escribirImagen(pixelesbinario,es);
+	
 }
