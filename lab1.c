@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 typedef struct {
 	int red;
@@ -344,7 +345,32 @@ void escribirImagen(Pixel* punteroPixeles, Estructura* est){
 	close(archivoSalida);
 }
 
-void main(){
+void main(int argc, char *argv[]){
+	int cantidad, umbral_b, umbral_nb;
+	int bandera = 0;
+	int opt;
+  	while ((opt = getopt (argc, argv, "c:u:n:b")) != -1)
+  	{
+    	switch (opt)
+    	{
+      	case 'c':
+        	        cantidad = atoi(optarg);
+        	        printf ("c: \"%i\"\n", cantidad);
+            	    break;
+      	case 'u':
+            	    umbral_b = atoi(optarg);
+        	        printf ("u: \"%i\"\n", umbral_b);
+            	    break;
+        case 'n':
+        	        umbral_nb = atoi(optarg);
+        	        printf ("n: \"%i\"\n", umbral_nb);
+            	    break;
+      	case 'b':
+      				bandera = 1;
+        	        printf ("bandera: \"%i\"\n", bandera);
+            	    break;
+    	}
+  	}
 	char** tes=(char**)malloc(6*sizeof(char*));
 	tes[0]="10";
 	tes[1]="22";
@@ -365,7 +391,7 @@ void main(){
 	//printf("%i\n",es->cantidadDePares/3);
 	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
 	//Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/4);
-	Pixel* pixelesbinario=pixeles_binario(pixeles,es->cantidadDePares/4,90);
-	printf("\n\n%i\n\n", nearlyBlack(pixeles,es->cantidadDePares/4,90));
+	Pixel* pixelesbinario=pixeles_binario(pixeles,es->cantidadDePares/4,umbral_b);
+	printf("\n\n%i\n\n", nearlyBlack(pixeles,es->cantidadDePares/4,umbral_nb));
 	escribirImagen(pixelesbinario,es);
 }
