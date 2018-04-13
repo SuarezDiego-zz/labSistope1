@@ -259,7 +259,7 @@ Pixel pixel_a_negro(Pixel pix){
 	pixel_negro.red=ecucion_de_luminiscencia;
 	pixel_negro.green=ecucion_de_luminiscencia;
 	pixel_negro.blue=ecucion_de_luminiscencia;
-	//printf("%i\n",ecucion_de_luminiscencia);
+	pixel_negro.v=pix.v;
 	return pixel_negro;
 }
 
@@ -272,34 +272,75 @@ Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles){
 	return punteroPixelesBlancoYNegro;
 }
 
+Pixel* pixeles_binario(Pixel* punteroPix, int cantidadPixeles, int umbral){
+	int i;
+	float porcentajeBlanco;
+	Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
+	for(i=0;i<cantidadPixeles;i++){
+		punteroPixelesBinario[i]=pixel_a_negro(punteroPix[i]);
+		porcentajeBlanco=(100*punteroPixelesBinario[i].red)/255;
+		if(porcentajeBlanco>umbral){
+			punteroPixelesBinario[i].red=255;
+			punteroPixelesBinario[i].green=255;
+			punteroPixelesBinario[i].blue=255;
+		}
+		else{
+			punteroPixelesBinario[i].red=0;
+			punteroPixelesBinario[i].green=0;
+			punteroPixelesBinario[i].blue=0;
+		}
+
+	}
+	return punteroPixelesBinario;
+}
+
+int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
+	int i;
+	float porcentajeBlanco;
+	int contador_negros=0;
+	Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
+	for(i=0;i<cantidadPixeles;i++){
+		punteroPixelesBinario[i]=pixel_a_negro(punteroPix[i]);
+		porcentajeBlanco=(100*punteroPixelesBinario[i].red)/255;
+		if(porcentajeBlanco<=umbral){
+			contador_negros=contador_negros+1;
+		}
+	}
+	if(contador_negros>cantidadPixeles){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+
 void escribirImagen(Pixel* punteroPixeles, Estructura* est){
 	int i;
 	unsigned long x;
 	int j=138;
-	unsigned char* punteroFormatoBynario=(unsigned char*)malloc(sizeof(unsigned char)*(est->cantidadDePares+54));
+	unsigned char* punteroFormatoSalida=(unsigned char*)malloc(sizeof(unsigned char)*(est->cantidadDePares+54));
 	FILE *archivoSalida;
 	char* nombreArchivo="blancoYNegro.bmp";
 	archivoSalida = fopen(nombreArchivo, "wb");
 	for(i=0;i<138;i++){
-		punteroFormatoBynario[i]=stringAHexadecimal(est->par[i]);
+		punteroFormatoSalida[i]=stringAHexadecimal(est->par[i]);
 	}
 	for (i = (est->cantidadDePares/4)-1 ; i >= 0; i--){
-		punteroFormatoBynario[j+3]= punteroPixeles[i].v;
-		punteroFormatoBynario[j+2]=punteroPixeles[i].red;
-		punteroFormatoBynario[j+1]=punteroPixeles[i].green;
-		punteroFormatoBynario[j]=punteroPixeles[i].blue;
-
+		punteroFormatoSalida[j+3]= punteroPixeles[i].v;
+		punteroFormatoSalida[j+2]=punteroPixeles[i].red;
+		punteroFormatoSalida[j+1]=punteroPixeles[i].green;
+		punteroFormatoSalida[j]=punteroPixeles[i].blue;
 		j=j+4;
 	}
-	printf("5 %x\n", punteroFormatoBynario[5]);
-	printf("4 %x\n", punteroFormatoBynario[4]);
-	printf("3 %x\n", punteroFormatoBynario[3]);
-	printf("2 	%x\n", punteroFormatoBynario[2]);
+	printf("5 %x\n", punteroFormatoSalida[5]);
+	printf("4 %x\n", punteroFormatoSalida[4]);
+	printf("3 %x\n", punteroFormatoSalida[3]);
+	printf("2 %x\n", punteroFormatoSalida[2]);
 
-	x=(punteroFormatoBynario[5]*16777216)+(punteroFormatoBynario[4]*65536)+(punteroFormatoBynario[3]*256)+(punteroFormatoBynario[2]);
+	x=(punteroFormatoSalida[5]*16777216)+(punteroFormatoSalida[4]*65536)+(punteroFormatoSalida[3]*256)+(punteroFormatoSalida[2]);
 	//x= 1048714;
 	printf("%i\n",x);
-	fwrite(punteroFormatoBynario,x,1,archivoSalida);
+	fwrite(punteroFormatoSalida,x,1,archivoSalida);
 	close(archivoSalida);
 }
 
@@ -323,6 +364,8 @@ void main(){
 	//printf("%s\n",es->arregloBytesOrdenado[0]);
 	//printf("%i\n",es->cantidadDePares/3);
 	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
-	Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/4);
-	escribirImagen(pixelesbn,es);
+	//Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/4);
+	Pixel* pixelesbinario=pixeles_binario(pixeles,es->cantidadDePares/4,90);
+	printf("\n\n%i\n\n", nearlyBlack(pixeles,es->cantidadDePares/4,90));
+	escribirImagen(pixelesbinario,es);
 }
