@@ -17,40 +17,53 @@ typedef struct{
    int cantidadDePares;
 }Estructura;
 
+long calcularTamano(char* nombreArchivo){
+	long largo;
+	int x;
+	FILE *archivoEntrada;
+	archivoEntrada = fopen(nombreArchivo, "rb");
+	unsigned char *bytesTamano = (unsigned char*) malloc(sizeof(unsigned char)*5);
+	for(x=0;x<6;x++){
+		if(!feof(archivoEntrada)){
+			bytesTamano[x]=fgetc(archivoEntrada);
+		}
+		else{
+			return 0;
+		}
+	}
+	largo=(bytesTamano[5]*16777216)+(bytesTamano[4]*65536)+(bytesTamano[3]*256)+(bytesTamano[2]);
+	fclose(archivoEntrada);
+	return largo;
+}
+
 Estructura* leerImagen(){
 	int x,k;
 	int i=0;
 	int j=0;
-	char funcion[30];
+	long largo=calcularTamano("ngc2023.bmp");
 	Estructura* arr = (Estructura*)malloc(sizeof(Estructura));
 	FILE *archivoEntrada;
 	char* nombreArchivo="ngc2023.bmp";
 	archivoEntrada = fopen(nombreArchivo, "rb");
 	unsigned char auxInt;	
-	char **par = (char **) malloc(sizeof(char *)*10000000);
-	for(x=0;x<10000000;x++){
+	char **par = (char **) malloc(sizeof(char *)*largo);
+	for(x=0;x<largo;x++){
         par[x]=(char *) malloc(sizeof(char)*2);
 	}
     arr->par = par;	
-	char* textoStr=(char*)malloc(10000*sizeof(char));
 	char* auxStr=(char*)malloc(2*sizeof(char));
-	memset(textoStr,0,strlen(textoStr));
 	while (!feof(archivoEntrada)) {
     	auxInt = fgetc(archivoEntrada);
     	sprintf(auxStr,"%02x",auxInt);
     	//printf(" lo que se lee es: %s\n", auxStr);	
-    	strcat(textoStr,auxStr);
     	strcpy(par[j], auxStr);
     	par[j][2]= '\0';
     	//printf(" lo que se guarda es: %s\n", par[j]);
     	//printf("el valor de j es: %i\n", j);
-    	if (j==10000000)
-    	{
-    		exit(0);
-    	}
     	j++;
 	//printf("%s \n", auxStr);
 	}
+	fclose(archivoEntrada);
 	
 	par[j-1]='\0';
 	for (k = 0; k < j; ++k)
@@ -341,7 +354,7 @@ void escribirImagen(Pixel* punteroPixeles, Estructura* est,char* nombreArchivo){
 	//x= 1048714;
 	printf("%i\n",x);
 	fwrite(punteroFormatoSalida,x,1,archivoSalida);
-	close(archivoSalida);
+	fclose(archivoSalida);
 }
 
 void main(int argc, char *argv[]){
