@@ -15,93 +15,79 @@ typedef struct{
    char** arregloBytes;
    char** arregloBytesOrdenado;
    int cantidadDePares;
+   long largo;
 }Estructura;
 
 long calcularTamano(char* nombreArchivo){
-	long largo;
-	int x;
-	FILE *archivoEntrada;
-	archivoEntrada = fopen(nombreArchivo, "rb");
-	unsigned char *bytesTamano = (unsigned char*) malloc(sizeof(unsigned char)*5);
-	for(x=0;x<6;x++){
-		if(!feof(archivoEntrada)){
-			bytesTamano[x]=fgetc(archivoEntrada);
-		}
-		else{
-			return 0;
-		}
-	}
-	largo=(bytesTamano[5]*16777216)+(bytesTamano[4]*65536)+(bytesTamano[3]*256)+(bytesTamano[2]);
-	fclose(archivoEntrada);
-	return largo;
-}
+ 	long largo;
+ 	int x;
+ 	FILE *archivoEntrada;
+ 	archivoEntrada = fopen(nombreArchivo, "rb");
+ 	unsigned char *bytesTamano = (unsigned char*) malloc(sizeof(unsigned char)*5);
+ 	for(x=0;x<6;x++){
+ 		if(!feof(archivoEntrada)){
+ 			bytesTamano[x]=fgetc(archivoEntrada);
+ 			}
+ 		else{
+ 			return 0;
+ 			}
+ 		}
+ 	largo=(bytesTamano[5]*16777216)+(bytesTamano[4]*65536)+(bytesTamano[3]*256)+(bytesTamano[2]);
+ 	fclose(archivoEntrada);
+ 	return largo;
+ }
 
-Estructura* leerImagen(){
+Estructura* leerImagen(char* nombreArchivo){
 	int x,k;
 	int i=0;
 	int j=0;
-	long largo=calcularTamano("ngc2023.bmp");
+	long largo = calcularTamano(nombreArchivo);
+	printf("el largo es:	%d\n", largo);
 	Estructura* arr = (Estructura*)malloc(sizeof(Estructura));
 	FILE *archivoEntrada;
-	char* nombreArchivo="ngc2023.bmp";
+	printf("%s\n", nombreArchivo);
+	printf("AQUI SI\n");
 	archivoEntrada = fopen(nombreArchivo, "rb");
+	if (archivoEntrada == NULL)
+	{
+		printf("No se ha encontrado imagen. \n");
+		exit(0);
+	}
+	printf("AQUI NO\n");
 	unsigned char auxInt;	
-	char **par = (char **) malloc(sizeof(char *)*largo);
-	for(x=0;x<largo;x++){
+	char **par = (char **) malloc(sizeof(char *)*largo*4);
+	for(x=0;x<largo*4;x++){
         par[x]=(char *) malloc(sizeof(char)*2);
 	}
     arr->par = par;	
 	char* auxStr=(char*)malloc(2*sizeof(char));
 	while (!feof(archivoEntrada)) {
     	auxInt = fgetc(archivoEntrada);
-    	sprintf(auxStr,"%02x",auxInt);
-    	//printf(" lo que se lee es: %s\n", auxStr);	
+    	sprintf(auxStr,"%02x",auxInt);	
     	strcpy(par[j], auxStr);
     	par[j][2]= '\0';
-    	//printf(" lo que se guarda es: %s\n", par[j]);
-    	//printf("el valor de j es: %i\n", j);
     	j++;
-	//printf("%s \n", auxStr);
-	}
-	fclose(archivoEntrada);
-	
+	}	
 	par[j-1]='\0';
-	for (k = 0; k < j; ++k)
-	{
-		//printf("%s asd\n", par[k]);
-	}
-	
-
 	arr->cantidadDePares = j-1;
-	//int largo =strlen(textoStr);
-	//textoStr[largo-10]='\0';// le quita los f demas
-	//printf("%s\n", textoStr);
-	//printf("llega.\n");
+	fclose(archivoEntrada);
+	arr->largo = largo;
 	return arr;
 }
 
 Estructura* cortarArreglo(Estructura* estr){
 	int a=0;
 	int i,k,x;
-	char **arregloBytes = (char **) malloc(sizeof(char *)*10000000);
-	for(x=0;x<10000000;x++){
+	char **arregloBytes = (char **) malloc(sizeof(char *)*estr->largo);
+	for(x=0;x<estr->largo;x++){
         arregloBytes[x]=(char *) malloc(sizeof(char)*2);
 	}
-	for (i = 138; i < estr->cantidadDePares; ++i)//veeeeeeeeeeeeeeeer2
+	for (i = 138; i < estr->cantidadDePares; ++i)
 	{
 		strcpy(arregloBytes[a], estr->par[i]);
-		//printf("%s\n",arregloBytes[a]);
 		a++;
 	}
 	estr->cantidadDePares = estr->cantidadDePares - 138;
-	/*
-	for(i=1;i< estr->cantidadDePares+1;i++){
-		printf("%s\n",arregloBytes[i-1]);
-		if(i%3==0){
-			printf("\n");
-		}
-	}
-	*/
 	estr->arregloBytes = arregloBytes;
 	return estr;
 }
@@ -109,13 +95,11 @@ Estructura* cortarArreglo(Estructura* estr){
 Estructura* invertirArreglo(Estructura* estr){
 	int j=0;
 	int i;
-	//printf("%i\n",estr->cantidadDePares);
 	char **arregloBytesOrdenado = (char **) malloc(sizeof(char *)*estr->cantidadDePares);
 	for (i = estr->cantidadDePares-1 ; i >= 0; i--)
 	{
 		arregloBytesOrdenado[j]=(char *) malloc(sizeof(char)*2);
 		strcpy(arregloBytesOrdenado[j], estr->arregloBytes[i]);
-		//printf("%s\n",arregloBytesOrdenado[j]);
 		j++;
 	}
 	estr->arregloBytesOrdenado=arregloBytesOrdenado;
@@ -261,8 +245,6 @@ Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
 		punteroPixel[i].green=stringAHexadecimal(punteroStr[i*4+2]);
 		punteroPixel[i].blue=stringAHexadecimal(punteroStr[i*4+3]);
 		punteroPixel[i].v=stringAHexadecimal(punteroStr[i*4]);
-		//printf("rojo=%i verde=%i azul=%i\n",punteroPixel[i].red,punteroPixel[i].green,punteroPixel[i].blue);
-		//printf("%s %s %s\n",punteroStr[i*3],punteroStr[i*3+1],punteroStr[i*3+2]);
 	}
 	return punteroPixel;
 }
@@ -332,9 +314,10 @@ void escribirImagen(Pixel* punteroPixeles, Estructura* est,char* nombreArchivo){
 	int i;
 	unsigned long x;
 	int j=138;
-	unsigned char* punteroFormatoSalida=(unsigned char*)malloc(sizeof(unsigned char)*(est->cantidadDePares+54));
+	unsigned char* punteroFormatoSalida=(unsigned char*)malloc(sizeof(unsigned char)*(est->cantidadDePares+138));
 	FILE *archivoSalida;
 	archivoSalida = fopen(nombreArchivo, "wb");
+	
 	for(i=0;i<138;i++){
 		punteroFormatoSalida[i]=stringAHexadecimal(est->par[i]);
 	}
@@ -357,10 +340,24 @@ void escribirImagen(Pixel* punteroPixeles, Estructura* est,char* nombreArchivo){
 	fclose(archivoSalida);
 }
 
+
+
 void main(int argc, char *argv[]){
 	int cantidad, umbral_b, umbral_nb;
 	int bandera = 0;
 	int opt;
+	char numeroDeImagen[12];
+	char nombreImagenSalidaBinario[25];
+	char nombreImagenSalidaEscalaG[25];
+  	char contador[2];
+	strcpy(numeroDeImagen, "");
+	strcpy(nombreImagenSalidaBinario, "");
+	strcpy(nombreImagenSalidaEscalaG, "");
+	char* imagen = "imagen_";
+	char* imagenBinarizadaBase = "binario_";
+	char* imagenEscalaGrisesBase = "blancoynegro_";
+	
+	printf("comienza asi %s\n", numeroDeImagen);
   	while ((opt = getopt (argc, argv, "c:u:n:b")) != -1)
   	{
     	switch (opt)
@@ -383,30 +380,54 @@ void main(int argc, char *argv[]){
             	    break;
     	}
   	}
-	char** tes=(char**)malloc(6*sizeof(char*));
-	tes[0]="10";
-	tes[1]="22";
-	tes[2]="ff";
-	tes[3]="12";
-	tes[4]="24";
-	tes[5]="fa";
-	//Pixel* puntero=crearArregloPixeles(tes,2);
-	//pixel_a_negro(puntero[0]);
+  	if (bandera == 1)
+  	{
+  		printf("imagen 				nearly black\n");
+  	}
+  	for (int i = 0; i < cantidad; i++)
+  	{
+  		sprintf(contador, "%d", i+1);
+  		strcat(numeroDeImagen, imagen);
+  		strcat(numeroDeImagen, contador);
+  		strcat(numeroDeImagen, ".bmp");
+  		strcpy(nombreImagenSalidaBinario, imagenBinarizadaBase);
+  		strcpy(nombreImagenSalidaEscalaG, imagenEscalaGrisesBase);
+  		strcat(nombreImagenSalidaEscalaG, contador);
+  		strcat(nombreImagenSalidaBinario, contador);
+  		strcat(nombreImagenSalidaEscalaG, ".bmp");
+  		strcat(nombreImagenSalidaBinario, ".bmp");
+  		printf("%s\n", nombreImagenSalidaBinario);
+  		printf("%s\n", nombreImagenSalidaEscalaG);
+  		printf("ciclo: %i -> %s \n", i, numeroDeImagen);
+  		Estructura* es=leerImagen(numeroDeImagen);
+  		printf("llegamos hasta aqui\n");
+		es = cortarArreglo(es);
+		printf("se cae.\n");
+		es = invertirArreglo(es);
+		Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
+		Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/4);
+		Pixel* pixelesbinario=pixeles_binario(pixeles,es->cantidadDePares/4,umbral_b);
+		escribirImagen(pixelesbn,es,nombreImagenSalidaEscalaG);
+		escribirImagen(pixelesbinario,es,nombreImagenSalidaBinario);
+		printf("\n\n%i\n\n", nearlyBlack(pixeles,es->cantidadDePares/4,umbral_nb));
+		if (bandera == 1)
+		{
+			if (nearlyBlack(pixeles,es->cantidadDePares/4,umbral_nb) ==1)
+			{
+				printf("%s 				yes\n", numeroDeImagen);
+			}
+			else
+			{
+				printf("%s 				no\n", numeroDeImagen);	
+			}
+			
+		}
+		strcpy(numeroDeImagen, "");
+		strcpy(nombreImagenSalidaBinario, "");
+		strcpy(nombreImagenSalidaEscalaG, "");
+		printf("llega ACA %i!!!!!!!!!!!!!!!!!!!!!!!!\n", i);
+  	}
 
-	Estructura* es=leerImagen();
-	es = cortarArreglo(es);
-	printf("se cae.\n");
-	es = invertirArreglo(es);
-	//printf("%s\n",es->par[0]);
-	//printf("%s\n",es->arregloBytes[0]);
-	//printf("%s\n",es->arregloBytesOrdenado[0]);
-	//printf("%i\n",es->cantidadDePares/3);
-	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
-	Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/4);
-	Pixel* pixelesbinario=pixeles_binario(pixeles,es->cantidadDePares/4,umbral_b);
-	//printf("%i\n",umbral_b);
-	escribirImagen(pixelesbn,es,"blancoynegro.bmp");
-	escribirImagen(pixelesbinario,es,"binario.bmp");
-	printf("\n\n%i\n\n", nearlyBlack(pixeles,es->cantidadDePares/4,umbral_nb));
+	
 	
 }
