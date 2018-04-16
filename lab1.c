@@ -341,7 +341,7 @@ Descripcion:
 int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
 	int i;
 	float porcentajeBlanco;
-	int contador_negros=0;
+	long contador_negros=0;
 	Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
 	for(i=0;i<cantidadPixeles;i++){
 		punteroPixelesBinario[i]=pixel_a_negro(punteroPix[i]);
@@ -350,7 +350,7 @@ int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
 			contador_negros=contador_negros+1;
 		}
 	}
-	if(contador_negros>cantidadPixeles){
+	if((contador_negros*100)>((cantidadPixeles-contador_negros)*100)){
 		return 1;
 	}
 	else{
@@ -386,7 +386,6 @@ void escribirImagen(Pixel* punteroPixeles, Estructura* est,char* nombreArchivo){
 	fwrite(punteroFormatoSalida,x,1,archivoSalida);
 	fclose(archivoSalida);
 }
-
 
 
 void main(int argc, char *argv[]){
@@ -460,8 +459,5 @@ void main(int argc, char *argv[]){
 		strcpy(numeroDeImagen, "");
 		strcpy(nombreImagenSalidaBinario, "");
 		strcpy(nombreImagenSalidaEscalaG, "");
-  	}
-
-	
-	
+  	}	
 }
