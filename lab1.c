@@ -6,7 +6,7 @@
 
 /*
 Entrada: Nombre de un archivo con formato bmp.
-Salida: Cantidad de pixeles que contiene dicho archivo.
+Salida: Cantidad de bytes que contiene dicho archivo.
 Descripcion: Funcion que devuelve la cantidad total de bytes contenidos en una imagen con formato bmp.
 */
 long calcularTamano(char* nombreArchivo){
@@ -292,7 +292,7 @@ Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles){
 }
 
 /*
-Entrada: Arregllo de pixeles en escala de gris, cantidad de pixeles y un umbral
+Entrada: Arreglo de pixeles en escala de gris, cantidad de pixeles y un umbral
 Salida: Arreglo con los pixeles binarizados.
 Descripcion: Funcion que transforma todos los pixeles de un arreglo a una imagen binarizada
 que contiene solo los colores blanco y negro. Esto depende de si el color esta por sobre el umbral
