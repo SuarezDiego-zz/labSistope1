@@ -69,9 +69,9 @@ Estructura* leerImagen(char* nombreArchivo){
 }
 
 /*
-Entrada: 
-Salida:
-Descripcion:
+Entrada: Estructura que guarda todos los arreglos necesarios para el procesamiento.
+Salida: Misma estructura que entra pero con un arreglo adicional que que elimina su cabecera.
+Descripcion: Funcion que le quita la cabecera a un arreglo de imagen bmp.
 */
 Estructura* cortarArreglo(Estructura* estr){
 	int a=0;
@@ -91,9 +91,9 @@ Estructura* cortarArreglo(Estructura* estr){
 }
 
 /*
-Entrada:
-Salida:
-Descripcion:
+Entrada: Estructura que guarda todos los arreglos necesarios para el procesamiento.
+Salida: Misma estructura que entra pero con un arreglo adicional que contiene los pixeles invertidos.
+Descripcion: Funcion que recorre e invierte el orden de los pixeles en un nuevo arreglo.
 */
 Estructura* invertirArreglo(Estructura* estr){
 	int j=0;
@@ -110,9 +110,9 @@ Estructura* invertirArreglo(Estructura* estr){
 }
 
 /*
-Entrada:
-Salida:
-Descripcion:
+Entrada: Numero hexadecimal en formato de string.
+Salida: Numero convertido a entero.
+Descripcion: Convierte de hexadecimal a entero.
 */
 int stringAHexadecimal(char* stringEntrada){
 	int numeroHexa=0;
@@ -245,9 +245,9 @@ int stringAHexadecimal(char* stringEntrada){
 }
 
 /*
-Entrada:
-Salida:
-Descripcion:
+Entrada: Arreglo con todos los pixeles de la imagen en hexadecimal y un entero que indica cuantos pixeles hay.
+Salida: Arreglo con todos los pixeles convertidos a entero.
+Descripcion: Funcion que de todos los datos de la imagen crea un arreglo de pixeles.
 */
 Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
 	int i;
@@ -263,9 +263,9 @@ Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
 }
 
 /*
-Entrada:
-Salida:
-Descripcion:
+Entrada: Un pixel RGB.
+Salida: Un pixel en escala de grises
+Descripcion: Funcion que convierte un pixel RGB a escala de grises
 */
 Pixel pixel_a_negro(Pixel pix){
 	int ecucion_de_luminiscencia=pix.red*0.3+pix.green*0.59+pix.blue*0.11;
@@ -278,9 +278,9 @@ Pixel pixel_a_negro(Pixel pix){
 }
 
 /*
-Entrada:
-Salida:
-Descripcion:
+Entrada: Arreglo con pixeles y la cantidad de pixeles
+Salida: Arreglo con todos los pixeles convertidos a escala de grises.
+Descripcion: Funcion que transforma todos los pixeles de un arreglo a una escala de grises.
 */
 Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles){
 	int i;
@@ -292,9 +292,11 @@ Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles){
 }
 
 /*
-Entrada:
-Salida:
-Descripcion:
+Entrada: Arregllo de pixeles en escala de gris, cantidad de pixeles y un umbral
+Salida: Arreglo con los pixeles binarizados.
+Descripcion: Funcion que transforma todos los pixeles de un arreglo a una imagen binarizada
+que contiene solo los colores blanco y negro. Esto depende de si el color esta por sobre el umbral
+entonces el pixel sera blanco, en caso contrario, es negro.
 */
 Pixel* pixeles_binario(Pixel* punteroPix, int cantidadPixeles, int umbral){
 	int i;
@@ -319,9 +321,9 @@ Pixel* pixeles_binario(Pixel* punteroPix, int cantidadPixeles, int umbral){
 }
 
 /*
-Entrada:
-Salida:
-Descripcion:
+Entrada: Arreglo con pixeles, cantidad de pixeles y un umbral.
+Salida: Entero. En caso de ser 1, la imagen es cercana a negro, en caso contrario, no lo es.
+Descripcion: Funcion que permite determinar si una imagen es cercana a negro.
 */
 int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
 	int i;
@@ -344,9 +346,11 @@ int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
 }
 
 /*
-Entrada:
-Salida:
-Descripcion:
+Entrada: Arreglo con la imagen en escala de gris y la imagen binarizada, nombre que tendra el archivo que se escribe.
+Salida: Ninguna.
+Descripcion: Funcion que permite escribir las nuevas imagenes. Una en escala de grises y la otra binarizada segun el umbral
+entregado por el usuario. Por otra parte, esta funcion tambien calcula las dimensiones que debe tener el archivo de salida a
+traves de la cabecera de la imagen original.
 */
 void escribirImagen(Pixel* punteroPixeles, Estructura* est,char* nombreArchivo){
 	int i;
