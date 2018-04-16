@@ -2,22 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-typedef struct {
-	int red;
-	int green;
-	int blue;
-	int v;
-} Pixel;
-
-typedef struct{
-   char** par;
-   char** arregloBytes;
-   char** arregloBytesOrdenado;
-   int cantidadDePares;
-   long largo;
-}Estructura;
-
+#include "header.h"
 
 /*
 Entrada: Nombre de un archivo con formato bmp.
