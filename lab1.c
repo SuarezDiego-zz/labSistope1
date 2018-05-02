@@ -111,7 +111,7 @@ Estructura* invertirArreglo(Estructura* estr){
 	estr->arregloBytesOrdenado=arregloBytesOrdenado;
 
 
-	for (i = 0; i < 138; ++i)
+	for (i = 0; i <estr->cantidadDePares-138; ++i)
 	{
 		free(estr->arregloBytes[i]);
 	}
