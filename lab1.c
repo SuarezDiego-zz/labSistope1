@@ -25,6 +25,8 @@ long calcularTamano(char* nombreArchivo){
  		}
  	largo=(bytesTamano[5]*16777216)+(bytesTamano[4]*65536)+(bytesTamano[3]*256)+(bytesTamano[2]);
  	fclose(archivoEntrada);
+
+ 	free(bytesTamano);
  	return largo;
  }
 
@@ -35,8 +37,7 @@ Descripcion: Funcion encargada de leer los bytes de la imagen y guardalos en un 
 una imagen por pantalla.
 */
 Estructura* leerImagen(char* nombreArchivo){
-	int x,k;
-	int i=0;
+	int x;
 	int j=0;
 	long largo = calcularTamano(nombreArchivo);
 	Estructura* arr = (Estructura*)malloc(sizeof(Estructura));
@@ -65,6 +66,8 @@ Estructura* leerImagen(char* nombreArchivo){
 	arr->cantidadDePares = j-1;
 	fclose(archivoEntrada);
 	arr->largo = largo;
+
+	free(auxStr);
 	return arr;
 }
 
@@ -75,7 +78,7 @@ Descripcion: Funcion que le quita la cabecera a un arreglo de imagen bmp.
 */
 Estructura* cortarArreglo(Estructura* estr){
 	int a=0;
-	int i,k,x;
+	int i,x;
 	char **arregloBytes = (char **) malloc(sizeof(char *)*estr->largo);
 	for(x=0;x<estr->largo;x++){
         arregloBytes[x]=(char *) malloc(sizeof(char)*2);
@@ -106,6 +109,13 @@ Estructura* invertirArreglo(Estructura* estr){
 		j++;
 	}
 	estr->arregloBytesOrdenado=arregloBytesOrdenado;
+
+
+	for (i = 0; i < 138; ++i)
+	{
+		free(estr->arregloBytes[i]);
+	}
+	free(estr->arregloBytes);
 	return estr;
 }
 
@@ -251,7 +261,6 @@ Descripcion: Funcion que de todos los datos de la imagen crea un arreglo de pixe
 */
 Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
 	int i;
-	int aux;
 	Pixel* punteroPixel=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
 	for(i=0;i<cantidadPixeles;i++){
 		punteroPixel[i].red=stringAHexadecimal(punteroStr[i*4+1]);
@@ -376,9 +385,17 @@ void escribirImagen(Pixel* punteroPixeles, Estructura* est,char* nombreArchivo){
 	fclose(archivoSalida);
 }
 
+void liberarEstructura(Estructura* estr){
+	int i;
+	for(i=0;i<estr->cantidadDePares;i++){
+		free(estr->par[i]);
+	}
+	free(estr->par);
+	free(estr);
+}
 
 void main(int argc, char *argv[]){
-	int cantidad, umbral_b, umbral_nb;
+	int cantidad, umbral_b, umbral_nb,i;
 	int bandera = 0;
 	int opt;
 	char numeroDeImagen[12];
@@ -413,7 +430,7 @@ void main(int argc, char *argv[]){
   	{
   		printf("imagen 				nearly black\n");
   	}
-  	for (int i = 0; i < cantidad; i++)
+  	for (i = 0; i < cantidad; i++)
   	{
   		sprintf(contador, "%d", i+1);
   		strcat(numeroDeImagen, imagen);
@@ -428,11 +445,18 @@ void main(int argc, char *argv[]){
   		Estructura* es=leerImagen(numeroDeImagen);
 		es = cortarArreglo(es);
 		es = invertirArreglo(es);
+		int o;
 		Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
+		for(o=0;o<es->cantidadDePares/4;o++){
+			free(es->arregloBytesOrdenado[o]);
+		}
+		free(es->arregloBytesOrdenado);
 		Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/4);
-		Pixel* pixelesbinario=pixeles_binario(pixeles,es->cantidadDePares/4,umbral_b);
 		escribirImagen(pixelesbn,es,nombreImagenSalidaEscalaG);
+		free(pixelesbn);
+		Pixel* pixelesbinario=pixeles_binario(pixeles,es->cantidadDePares/4,umbral_b);
 		escribirImagen(pixelesbinario,es,nombreImagenSalidaBinario);
+		free(pixelesbinario);
 		if (bandera == 1)
 		{
 			if (nearlyBlack(pixeles,es->cantidadDePares/4,umbral_nb) ==1)
@@ -448,5 +472,6 @@ void main(int argc, char *argv[]){
 		strcpy(numeroDeImagen, "");
 		strcpy(nombreImagenSalidaBinario, "");
 		strcpy(nombreImagenSalidaEscalaG, "");
+		liberarEstructura(es);
   	}	
 }
