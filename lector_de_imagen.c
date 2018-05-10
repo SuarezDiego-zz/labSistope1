@@ -273,4 +273,9 @@ Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
 
 void main(int argc, char *argv[]){
 	printf("lector_de_imagen\n");
+	int output;
+	//int fd[2];
+	pipe(argv[0]);
+	read(argv[0],output,sizeof(int));
+	printf("out=%i\n",output);
 }

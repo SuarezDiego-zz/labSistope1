@@ -101,6 +101,19 @@ void main(int argc, char *argv[]){
 	pids_hijos[4]=-1;
 	int pid_main=getpid();
 	printf("main\n");
+
+
+	//pipe
+	//fd[0] se lee
+	//fd[1] se escribe
+	
+	int fd[2];
+	pipe(fd);
+	int input_int=20;
+	write(fd[1],&input_int,sizeof(int));
+	
+
+	//crea los procesos solo si es el proceso main
 	if(pid_main==getpid()){
 		pid_lector_de_imagen=fork();
 	}
@@ -117,6 +130,7 @@ void main(int argc, char *argv[]){
 		pid_escritor_de_imagen=fork();
 	}
 
+	//guarda los pids de los hijos segun el proceso
 	if(pid_lector_de_imagen==0){
 		pids_hijos[0]=getpid();
 	}
@@ -133,7 +147,11 @@ void main(int argc, char *argv[]){
 		pids_hijos[4]=getpid();
 	}
 	
+
+	//cambia el contenido y ejecucion de los hijos a la ejecucion correspondiente
 	if(pids_hijos[0] == getpid()){
+		dup2(fd[0], STDIN_FILENO);
+		close(fd[0]);
 		execv("lector_de_imagen", argv);
 	}
 	if(pids_hijos[1] == getpid()){
