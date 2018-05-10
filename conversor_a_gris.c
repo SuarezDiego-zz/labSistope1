@@ -35,4 +35,8 @@ Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles){
 
 void main(int argc, char *argv[]){
 	printf("conversor_a_gris\n");
+	char buffer[100];
+	read(STDIN_FILENO, buffer, 100);
+	usleep(2000000);
+	printf("contenido: %s\n", buffer);
 }

@@ -105,7 +105,7 @@ void main(int argc, char *argv[]){
 	pids_hijos[2]=-1;
 	pids_hijos[3]=-1;
 	pids_hijos[4]=-1;
-	
+
 	int pid_main=getpid();
 	printf("main\n");
 
@@ -161,11 +161,12 @@ void main(int argc, char *argv[]){
 	//cambia el contenido y ejecucion de los hijos a la ejecucion correspondiente
 	if(pids_hijos[0] == getpid()){
 		dup2(fd[0],STDIN_FILENO);
+		dup2(fd[1],STDOUT_FILENO);
         //close(fd[1]);
 		execv("lector_de_imagen", argv);
 	}
 	if(pids_hijos[1] == getpid()){
-		
+		dup2(fd[0],STDIN_FILENO);
 		execv("conversor_a_gris", argv);
 	}
 	if(pids_hijos[2] == getpid()){
