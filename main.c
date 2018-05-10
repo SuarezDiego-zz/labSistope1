@@ -88,17 +88,24 @@ void main(int argc, char *argv[]){
 }
 */
 void main(int argc, char *argv[]){
+	int status_lector_de_imagen;
+	int status_conversor_a_gris;
+	int status_binarizador_de_imagen;
+	int status_analista_de_propiedad;
+
 	int pid_lector_de_imagen;
 	int pid_conversor_a_gris;
 	int pid_binarizador_de_imagen;
 	int pid_analista_de_propiedad;
 	int pid_escritor_de_imagen;
+
 	int* pids_hijos= (int*)malloc(sizeof(int)*5);
 	pids_hijos[0]=-1;
 	pids_hijos[1]=-1;
 	pids_hijos[2]=-1;
 	pids_hijos[3]=-1;
 	pids_hijos[4]=-1;
+	
 	int pid_main=getpid();
 	printf("main\n");
 
@@ -106,11 +113,10 @@ void main(int argc, char *argv[]){
 	//pipe
 	//fd[0] se lee
 	//fd[1] se escribe
-	
+
 	int fd[2];
 	pipe(fd);
-	int input_int=20;
-	write(fd[1],&input_int,sizeof(int));
+	write(fd[1], "TE ENVIO ESTE MENSAJE CUALQUIERA", 33);
 	
 
 	//crea los procesos solo si es el proceso main
@@ -118,15 +124,19 @@ void main(int argc, char *argv[]){
 		pid_lector_de_imagen=fork();
 	}
 	if(pid_main==getpid()){
+		waitpid(pid_lector_de_imagen, &status_lector_de_imagen, 0);
 		pid_conversor_a_gris=fork();
 	}
 	if(pid_main==getpid()){
+		waitpid(pid_conversor_a_gris, &status_conversor_a_gris, 0);
 		pid_binarizador_de_imagen=fork();
 	}
 	if(pid_main==getpid()){
+		waitpid(pid_binarizador_de_imagen, &status_binarizador_de_imagen, 0);
 		pid_analista_de_propiedad=fork();
 	}
 	if(pid_main==getpid()){
+		waitpid(pid_analista_de_propiedad, &status_analista_de_propiedad, 0);
 		pid_escritor_de_imagen=fork();
 	}
 
@@ -150,11 +160,12 @@ void main(int argc, char *argv[]){
 
 	//cambia el contenido y ejecucion de los hijos a la ejecucion correspondiente
 	if(pids_hijos[0] == getpid()){
-		dup2(fd[0], STDIN_FILENO);
-		close(fd[0]);
+		dup2(fd[0],STDIN_FILENO);
+        //close(fd[1]);
 		execv("lector_de_imagen", argv);
 	}
 	if(pids_hijos[1] == getpid()){
+		
 		execv("conversor_a_gris", argv);
 	}
 	if(pids_hijos[2] == getpid()){
