@@ -54,8 +54,6 @@ void main(int argc, char *argv[]){
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
 	printf("%i\n", nearlyBlack(mp->pixeles,mp->estructura->cantidadDePares/4,argv[1]));
 	printf("analista_de_propiedad\n");
-	printf("%i\n",mp->xd);
-	mp->xd=5;
 	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 	printf("proc 4\n");
 }

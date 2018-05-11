@@ -199,8 +199,6 @@ void main(int argc, char *argv[]){
 	escribirImagen(pixelesbn,mp->estructura,argv[1]);
 	free(pixelesbn);
 	printf("conversor_a_gris\n");
-	printf("%i\n",mp->xd);
-	mp->xd=3;
 	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 	printf("proc 2\n");
 }

@@ -116,7 +116,6 @@ void main(int argc, char *argv[]){
 
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	pipe(mp->pipefd);
-	mp->xd=1;
 	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 	
 
@@ -162,7 +161,6 @@ void main(int argc, char *argv[]){
 
 	//cambia el contenido y ejecucion de los hijos a la ejecucion correspondiente
 	if(pids_hijos[0] == getpid()){
-		//close(mp->pipefd[1]);
 		dup2(mp->pipefd[0],STDIN_FILENO);
 		execv("lector_de_imagen", argv);
 	}

@@ -276,20 +276,19 @@ argv[1] => nombre de la imagen.
 */
 void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
+	read(STDIN_FILENO, mp, sizeof(MensajePipe));
 	Estructura* es=leerImagen(argv[1]);
 	es = cortarArreglo(es);
 	es = invertirArreglo(es);
 	int o;
 	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
 	mp->pixeles = pixeles;
+	mp->estructura=es;
 	for(o=0;o<es->cantidadDePares/4;o++){
 		free(es->arregloBytesOrdenado[o]);
 	}
 	free(es->arregloBytesOrdenado);
 	printf("lector_de_imagen\n");
-	read(STDIN_FILENO, mp, sizeof(MensajePipe));
-	printf("%i\n",mp->xd);
-	mp->xd=2;
 	write(mp->pipefd[1], mp,sizeof(MensajePipe));
 	printf("proc 1\n");
 }

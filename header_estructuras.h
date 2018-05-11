@@ -15,9 +15,9 @@ typedef struct{
 
 typedef struct{
    Estructura* estructura;
+   char** cabeza_imagen;
    Pixel* pixeles;
    int pipefd[2];
-   int xd;
 }MensajePipe;
 
 long calcularTamano(char* nombreArchivo);

@@ -214,8 +214,6 @@ void main(int argc, char *argv[]){
 	escribirImagen(pixelesbinario,mp->estructura,argv[2]);
 	free(pixelesbinario);
 	printf("binarizador_de_imagen\n");
-	printf("%i\n",mp->xd);
-	mp->xd=4;
 	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 	printf("proc 3\n");
 }
