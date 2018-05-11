@@ -44,7 +44,13 @@ int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
 	}
 }
 
+
+/*
+Se debe tener acceso a pixeles, el cual sale del proceso lector_de_imagen y Estructura.
+argv[1] => umbral_nb
+*/
 void main(int argc, char *argv[]){
+	printf("%i\n", nearlyBlack(pixeles,es->cantidadDePares/4,argv[1]);
 	printf("analista_de_propiedad\n");
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));

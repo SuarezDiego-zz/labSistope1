@@ -48,7 +48,15 @@ Pixel* pixeles_binario(Pixel* punteroPix, int cantidadPixeles, int umbral){
 	return punteroPixelesBinario;
 }
 
+/*
+Se debe tener acceso a pixeles, el cual sale del proceso lector_de_imagen y Estructura.
+argv[1] => umbral_b
+argv[2] => nombreImagenSalidaBinario
+*/
 void main(int argc, char *argv[]){
+	Pixel* pixelesbinario=pixeles_binario(pixeles,es->cantidadDePares/4,argv[1]);
+	escribirImagen(pixelesbinario,es,argv[2]);
+	free(pixelesbinario);
 	printf("binarizador_de_imagen\n");
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));

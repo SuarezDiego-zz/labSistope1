@@ -33,7 +33,15 @@ Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles){
 	return punteroPixelesBlancoYNegro;
 }
 
+
+/*
+Se debe tener acceso a pixeles, el cual sale del proceso anterior y a Estructura.
+argv[1] => nombreImagenSalidaEscalaG.
+*/
 void main(int argc, char *argv[]){
+	Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/4);
+	escribirImagen(pixelesbn,es,argv[1]);
+	free(pixelesbn);
 	printf("conversor_a_gris\n");
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
