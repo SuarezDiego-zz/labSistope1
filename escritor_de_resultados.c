@@ -181,4 +181,7 @@ void liberarEstructura(Estructura* estr){
 
 void main(int argc, char *argv[]){
 	printf("escritor_de_resultados\n");
+	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
+	read(STDIN_FILENO, mp, sizeof(MensajePipe));
+	printf("%i\n",mp->xd);
 }

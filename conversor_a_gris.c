@@ -35,8 +35,9 @@ Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles){
 
 void main(int argc, char *argv[]){
 	printf("conversor_a_gris\n");
-	char buffer[100];
-	read(STDIN_FILENO, buffer, 100);
-	usleep(2000000);
-	printf("contenido: %s\n", buffer);
+	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
+	read(STDIN_FILENO, mp, sizeof(MensajePipe));
+	printf("%i\n",mp->xd);
+	mp->xd=3;
+	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 }

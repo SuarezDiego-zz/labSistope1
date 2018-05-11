@@ -273,10 +273,9 @@ Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
 
 void main(int argc, char *argv[]){
 	printf("lector_de_imagen\n");
-	char buffer[100];
-	read(STDIN_FILENO, buffer, 100);
-	usleep(2000000);
-	printf("contenido: %s\n", buffer);
-	write(STDOUT_FILENO, "12345678", 8);
-	//close(STDIN_FILENO);
+	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
+	read(STDIN_FILENO, mp, sizeof(MensajePipe));
+	printf("%i\n",mp->xd);
+	mp->xd=2;
+	write(mp->pipefd[1], mp,sizeof(MensajePipe));
 }

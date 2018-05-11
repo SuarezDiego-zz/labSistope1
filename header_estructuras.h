@@ -13,6 +13,13 @@ typedef struct{
    long largo;
 }Estructura;
 
+typedef struct{
+   Estructura* estructura;
+   Pixel* pixeles;
+   int pipefd[2];
+   int xd;
+}MensajePipe;
+
 long calcularTamano(char* nombreArchivo);
 Estructura* leerImagen(char* nombreArchivo);
 Estructura* cortarArreglo(Estructura* estr);

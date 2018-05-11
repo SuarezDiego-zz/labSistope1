@@ -50,4 +50,9 @@ Pixel* pixeles_binario(Pixel* punteroPix, int cantidadPixeles, int umbral){
 
 void main(int argc, char *argv[]){
 	printf("binarizador_de_imagen\n");
+	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
+	read(STDIN_FILENO, mp, sizeof(MensajePipe));
+	printf("%i\n",mp->xd);
+	mp->xd=4;
+	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 }

@@ -46,4 +46,9 @@ int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
 
 void main(int argc, char *argv[]){
 	printf("analista_de_propiedad\n");
+	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
+	read(STDIN_FILENO, mp, sizeof(MensajePipe));
+	printf("%i\n",mp->xd);
+	mp->xd=5;
+	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 }

@@ -114,9 +114,10 @@ void main(int argc, char *argv[]){
 	//fd[0] se lee
 	//fd[1] se escribe
 
-	int fd[2];
-	pipe(fd);
-	write(fd[1], "TE ENVIO ESTE MENSAJE CUALQUIERA", 33);
+	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
+	pipe(mp->pipefd);
+	mp->xd=1;
+	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 	
 
 	//crea los procesos solo si es el proceso main
@@ -160,22 +161,24 @@ void main(int argc, char *argv[]){
 
 	//cambia el contenido y ejecucion de los hijos a la ejecucion correspondiente
 	if(pids_hijos[0] == getpid()){
-		dup2(fd[0],STDIN_FILENO);
-		dup2(fd[1],STDOUT_FILENO);
-        //close(fd[1]);
+		//close(mp->pipefd[1]);
+		dup2(mp->pipefd[0],STDIN_FILENO);
 		execv("lector_de_imagen", argv);
 	}
 	if(pids_hijos[1] == getpid()){
-		dup2(fd[0],STDIN_FILENO);
+		dup2(mp->pipefd[0],STDIN_FILENO);
 		execv("conversor_a_gris", argv);
 	}
 	if(pids_hijos[2] == getpid()){
+		dup2(mp->pipefd[0],STDIN_FILENO);
 		execv("binarizador_de_imagen", argv);
 	}
 	if(pids_hijos[3] == getpid()){
+		dup2(mp->pipefd[0],STDIN_FILENO);
 		execv("analista_de_propiedad", argv);
 	}
 	if(pids_hijos[4] == getpid()){
+		dup2(mp->pipefd[0],STDIN_FILENO);
 		execv("escritor_de_resultados", argv);
 	}
 	
