@@ -184,4 +184,5 @@ void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
 	printf("%i\n",mp->xd);
+	printf("proc 5\n");
 }

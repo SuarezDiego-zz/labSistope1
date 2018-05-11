@@ -291,4 +291,5 @@ void main(int argc, char *argv[]){
 	printf("%i\n",mp->xd);
 	mp->xd=2;
 	write(mp->pipefd[1], mp,sizeof(MensajePipe));
+	printf("proc 1\n");
 }

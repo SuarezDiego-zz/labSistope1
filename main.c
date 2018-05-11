@@ -158,6 +158,7 @@ void main(int argc, char *argv[]){
 		pids_hijos[4]=getpid();
 	}
 	
+	printf("BANDERA\n");
 
 	//cambia el contenido y ejecucion de los hijos a la ejecucion correspondiente
 	if(pids_hijos[0] == getpid()){

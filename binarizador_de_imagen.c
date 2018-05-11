@@ -217,4 +217,5 @@ void main(int argc, char *argv[]){
 	printf("%i\n",mp->xd);
 	mp->xd=4;
 	write(mp->pipefd[1],mp,sizeof(MensajePipe));
+	printf("proc 3\n");
 }
