@@ -280,6 +280,9 @@ void main(int argc, char *argv[]){
 	Estructura* es=leerImagen(argv[1]);
 	es = cortarArreglo(es);
 	es = invertirArreglo(es);
+	for(int i=0;i<138;i++){
+		mp->cabeza_imagen[i]=stringAHexadecimal(es->par[i]);
+	}
 	int o;
 	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
 	mp->pixeles = pixeles;
