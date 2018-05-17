@@ -193,11 +193,8 @@ Se debe tener acceso a pixeles, el cual sale del proceso anterior y a Estructura
 argv[1] => nombreImagenSalidaEscalaG.
 */
 void main(int argc, char *argv[]){
-	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
+	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe)+2000);
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
-	//Pixel* ppp=(Pixel*)	malloc((mp->cantidadDePares/4)*sizeof(Pixel));
-	//Pixel *ppp=(Pixel*)mp->pixeles;
-	//unsigned char* ci= &mp->cabeza_imagen;
 	printf("%i\n",mp->cantidadDePares );
 	//printf("%i\n", ppp[0].red);
 	/*
@@ -207,12 +204,12 @@ void main(int argc, char *argv[]){
 		//printf("%i\n", pixeles[j].red);
 		printf("%i\n", mp->cabeza_imagen[j]);
 	}
-	/*
-	Pixel* pixelesbn=pixeles_blanco_y_negro(ppp,mp->cantidadDePares/4);
-	escribirImagen(pixelesbn,ci,"pico.bmp", mp->cantidadDePares);
+	
+	Pixel* pixelesbn=pixeles_blanco_y_negro(mp->pixeles,mp->cantidadDePares/4);
+	escribirImagen(pixelesbn,mp->cabeza_imagen,"pico.bmp", mp->cantidadDePares);
 	free(pixelesbn);
 	printf("conversor_a_gris\n");
 	//write(mp->pipefd[1],mp,sizeof(MensajePipe));
 	printf("proc 2\n");
-	*/
+	
 }

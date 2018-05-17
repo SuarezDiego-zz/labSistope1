@@ -299,8 +299,10 @@ void main(int argc, char *argv[]){
 		//printf("%i\n", pixeles[j].red);
 		printf("%i\n", mp->cabeza_imagen[j]);
 	}
-	for(int i=0;i<mp->cantidadDePares/4;i++){
-		//mp->pixeles[i]=pixeles[i];
+	printf("%d\n",mp->cantidadDePares/4 );
+	for(int i=0;i<(mp->cantidadDePares/4);i++){
+		mp->pixeles[i]=pixeles[i];
+
 	}
 	write(mp->pipefd[1], mp,sizeof(MensajePipe));
 	printf("lector_de_imagen\n");
