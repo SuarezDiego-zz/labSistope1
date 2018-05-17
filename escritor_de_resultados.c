@@ -146,18 +146,18 @@ Descripcion: Funcion que permite escribir las nuevas imagenes. Una en escala de 
 entregado por el usuario. Por otra parte, esta funcion tambien calcula las dimensiones que debe tener el archivo de salida a
 traves de la cabecera de la imagen original.
 */
-void escribirImagen(Pixel* punteroPixeles, Estructura* est,char* nombreArchivo){
+void escribirImagen(Pixel* punteroPixeles, unsigned char* header, char* nombreArchivo, int cantidadDePares){
 	int i;
 	unsigned long x;
 	int j=138;
-	unsigned char* punteroFormatoSalida=(unsigned char*)malloc(sizeof(unsigned char)*(est->cantidadDePares+138));
+	unsigned char* punteroFormatoSalida=(unsigned char*)malloc(sizeof(unsigned char)*(cantidadDePares+138));
 	FILE *archivoSalida;
 	archivoSalida = fopen(nombreArchivo, "wb");
 	
 	for(i=0;i<138;i++){
-		punteroFormatoSalida[i]=stringAHexadecimal(est->par[i]);
+		punteroFormatoSalida[i]=header[i];
 	}
-	for (i = (est->cantidadDePares/4)-1 ; i >= 0; i--){
+	for (i = (cantidadDePares/4)-1 ; i >= 0; i--){
 		punteroFormatoSalida[j+3]= punteroPixeles[i].v;
 		punteroFormatoSalida[j+2]=punteroPixeles[i].red;
 		punteroFormatoSalida[j+1]=punteroPixeles[i].green;

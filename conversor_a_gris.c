@@ -163,18 +163,18 @@ int stringAHexadecimal(char* stringEntrada){
 	return numeroHexa;
 }
 
-void escribirImagen(Pixel* punteroPixeles, Estructura* est,char* nombreArchivo){
+void escribirImagen(Pixel* punteroPixeles, unsigned char* header, char* nombreArchivo, int cantidadDePares){
 	int i;
 	unsigned long x;
 	int j=138;
-	unsigned char* punteroFormatoSalida=(unsigned char*)malloc(sizeof(unsigned char)*(est->cantidadDePares+138));
+	unsigned char* punteroFormatoSalida=(unsigned char*)malloc(sizeof(unsigned char)*(cantidadDePares+138));
 	FILE *archivoSalida;
 	archivoSalida = fopen(nombreArchivo, "wb");
 	
 	for(i=0;i<138;i++){
-		punteroFormatoSalida[i]=stringAHexadecimal(est->par[i]);
+		punteroFormatoSalida[i]=header[i];
 	}
-	for (i = (est->cantidadDePares/4)-1 ; i >= 0; i--){
+	for (i = (cantidadDePares/4)-1 ; i >= 0; i--){
 		punteroFormatoSalida[j+3]= punteroPixeles[i].v;
 		punteroFormatoSalida[j+2]=punteroPixeles[i].red;
 		punteroFormatoSalida[j+1]=punteroPixeles[i].green;
@@ -195,8 +195,8 @@ argv[1] => nombreImagenSalidaEscalaG.
 void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
-	Pixel* pixelesbn=pixeles_blanco_y_negro(mp->pixeles,mp->estructura->cantidadDePares/4);
-	escribirImagen(pixelesbn,mp->estructura,argv[1]);
+	Pixel* pixelesbn=pixeles_blanco_y_negro(mp->pixeles,mp->cantidadDePares/4);
+	escribirImagen(pixelesbn,mp->cabeza_imagen,"pico.bmp", mp->cantidadDePares);
 	free(pixelesbn);
 	printf("conversor_a_gris\n");
 	write(mp->pipefd[1],mp,sizeof(MensajePipe));

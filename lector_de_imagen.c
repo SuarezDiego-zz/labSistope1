@@ -276,13 +276,20 @@ argv[1] => nombre de la imagen.
 */
 void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
+	unsigned char* cabeza_imagen=(unsigned char*)malloc(sizeof(unsigned char)*138);
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
-	Estructura* es=leerImagen(argv[1]);
+	Estructura* es=leerImagen("imagen_1.bmp");
 	es = cortarArreglo(es);
 	es = invertirArreglo(es);
 	for(int i=0;i<138;i++){
-		mp->cabeza_imagen[i]=stringAHexadecimal(es->par[i]);
+		cabeza_imagen[i]=stringAHexadecimal(es->par[i]);
+	printf("%i CHUPA EL PICO\n", i);
 	}
+	for (int j = 0; j < 138; j++)
+	{
+		printf("%s\n", cabeza_imagen[j]);
+	}
+	mp->cabeza_imagen = cabeza_imagen;
 	int o;
 	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
 	mp->pixeles = pixeles;

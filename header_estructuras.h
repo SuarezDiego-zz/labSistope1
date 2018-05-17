@@ -18,6 +18,7 @@ typedef struct{
    char** cabeza_imagen;
    Pixel* pixeles;
    int pipefd[2];
+   int cantidadDePares;
 }MensajePipe;
 
 long calcularTamano(char* nombreArchivo);
@@ -30,5 +31,5 @@ Pixel pixel_a_negro(Pixel pix);
 Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles);
 Pixel* pixeles_binario(Pixel* punteroPix, int cantidadPixeles, int umbral);
 int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral);
-void escribirImagen(Pixel* punteroPixeles, Estructura* est,char* nombreArchivo);
+void escribirImagen(Pixel* punteroPixeles, unsigned char* header, char* nombreArchivo, int cantidadDePares);
 void main(int argc, char *argv[]);
