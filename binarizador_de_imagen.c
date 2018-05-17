@@ -208,6 +208,7 @@ argv[1] => umbral_b
 argv[2] => nombreImagenSalidaBinario
 */
 void main(int argc, char *argv[]){
+	/*
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
 	Pixel* pixelesbinario=pixeles_binario(mp->pixeles,mp->cantidadDePares/4,argv[1]);
@@ -216,4 +217,5 @@ void main(int argc, char *argv[]){
 	printf("binarizador_de_imagen\n");
 	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 	printf("proc 3\n");
+	*/
 }

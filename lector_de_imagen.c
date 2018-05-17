@@ -283,22 +283,17 @@ void main(int argc, char *argv[]){
 	es = invertirArreglo(es);
 	for(int i=0;i<138;i++){
 		cabeza_imagen[i]=stringAHexadecimal(es->par[i]);
-	printf("%i CHUPA EL PICO\n", i);
+		printf("iteracion:%i dentro:%i\n", i,cabeza_imagen[i]);
 	}
-	for (int j = 0; j < 138; j++)
-	{
-		printf("%s\n", cabeza_imagen[j]);
-	}
-	mp->cabeza_imagen = cabeza_imagen;
+	mp->cabeza_imagen = *cabeza_imagen;
+	mp->cantidadDePares=es->cantidadDePares;
 	int o;
 	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
-	mp->pixeles = pixeles;
-	mp->estructura=es;
+	mp->pixeles = *pixeles;
 	for(o=0;o<es->cantidadDePares/4;o++){
 		free(es->arregloBytesOrdenado[o]);
 	}
 	free(es->arregloBytesOrdenado);
 	printf("lector_de_imagen\n");
 	write(mp->pipefd[1], mp,sizeof(MensajePipe));
-	printf("proc 1\n");
 }

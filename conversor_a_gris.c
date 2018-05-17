@@ -195,10 +195,20 @@ argv[1] => nombreImagenSalidaEscalaG.
 void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
-	Pixel* pixelesbn=pixeles_blanco_y_negro(mp->pixeles,mp->cantidadDePares/4);
-	escribirImagen(pixelesbn,mp->cabeza_imagen,"pico.bmp", mp->cantidadDePares);
+	Pixel* ppp=&mp->pixeles;
+	unsigned char* ci= &mp->cabeza_imagen;
+	printf("%i\n",mp->cantidadDePares );
+	//printf("%i\n", ppp[0].red);
+	
+	for (int j = 0; j < 138; j++){printf("%i\n", ci[j]);}
+	
+	for (int j = 0; j < 10; j++){
+		printf("%i\n", ppp[j].red);
+	}
+	Pixel* pixelesbn=pixeles_blanco_y_negro(ppp,mp->cantidadDePares/4);
+	escribirImagen(pixelesbn,ci,"pico.bmp", mp->cantidadDePares);
 	free(pixelesbn);
 	printf("conversor_a_gris\n");
-	write(mp->pipefd[1],mp,sizeof(MensajePipe));
+	//write(mp->pipefd[1],mp,sizeof(MensajePipe));
 	printf("proc 2\n");
 }

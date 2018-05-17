@@ -14,9 +14,8 @@ typedef struct{
 }Estructura;
 
 typedef struct{
-   Estructura* estructura;
-   char** cabeza_imagen;
-   Pixel* pixeles;
+   unsigned char cabeza_imagen;
+   Pixel pixeles;
    int pipefd[2];
    int cantidadDePares;
 }MensajePipe;
