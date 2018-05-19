@@ -7,7 +7,6 @@ typedef struct {
 
 typedef struct{
    char** par;
-   char** arregloBytes;
    char** arregloBytesOrdenado;
    int cantidadDePares;
    long largo;
@@ -23,8 +22,7 @@ typedef struct{
 
 long calcularTamano(char* nombreArchivo);
 Estructura* leerImagen(char* nombreArchivo);
-Estructura* cortarArreglo(Estructura* estr);
-Estructura* invertirArreglo(Estructura* estr);
+Estructura* cortarEInvertirArreglo(Estructura* estr);
 int stringAHexadecimal(char* stringEntrada);
 Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles);
 Pixel pixel_a_negro(Pixel pix);
@@ -84,12 +82,9 @@ Estructura* leerImagen(char* nombreArchivo){
    for(x=0;x<largo*4;x++){
         par[x]=(char *) malloc(sizeof(char)*2);
    }
-    arr->par = par;  
-   char* auxStr=(char*)malloc(2*sizeof(char));
+    arr->par = par;
    while (!feof(archivoEntrada)) {
-      auxInt = fgetc(archivoEntrada);
-      sprintf(auxStr,"%02x",auxInt);   
-      strcpy(par[j], auxStr);
+      sprintf(par[j],"%02x",fgetc(archivoEntrada));
       par[j][2]= '\0';
       j++;
    }  
@@ -97,37 +92,12 @@ Estructura* leerImagen(char* nombreArchivo){
    arr->cantidadDePares = j-1;
    fclose(archivoEntrada);
    arr->largo = largo;
-
-   free(auxStr);
    return arr;
-}
-
-/*
-Entrada: Estructura que guarda todos los arreglos necesarios para el procesamiento.
-Salida: Misma estructura que entra pero con un arreglo adicional que que elimina su cabecera.
-Descripcion: Funcion que le quita la cabecera a un arreglo de imagen bmp.
-*/
-Estructura* cortarArreglo(Estructura* estr){
-   int a=0;
-   int i,x;
-   char **arregloBytes = (char **) malloc(sizeof(char *)*estr->largo);
-   for(x=0;x<estr->largo;x++){
-        arregloBytes[x]=(char *) malloc(sizeof(char)*2);
-   }
-   for (i = 138; i < estr->cantidadDePares; ++i)
-   {
-      strcpy(arregloBytes[a], estr->par[i]);
-      a++;
-   }
-   estr->cantidadDePares = estr->cantidadDePares - 138;
-   estr->arregloBytes = arregloBytes;
-   return estr;
 }
 
 Pixel* obtenerPixelesPipe(MensajePipe* p){
    Estructura* es=leerImagen(p->nombreImagen);
-   es = cortarArreglo(es);
-   es = invertirArreglo(es);
+   es = cortarEInvertirArreglo(es);
    Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
    return pixeles;
 }
@@ -137,24 +107,20 @@ Entrada: Estructura que guarda todos los arreglos necesarios para el procesamien
 Salida: Misma estructura que entra pero con un arreglo adicional que contiene los pixeles invertidos.
 Descripcion: Funcion que recorre e invierte el orden de los pixeles en un nuevo arreglo.
 */
-Estructura* invertirArreglo(Estructura* estr){
+Estructura* cortarEInvertirArreglo(Estructura* estr){
    int j=0;
    int i;
    char **arregloBytesOrdenado = (char **) malloc(sizeof(char *)*estr->cantidadDePares);
-   for (i = estr->cantidadDePares-1 ; i >= 0; i--)
+   for (i = estr->cantidadDePares-1 ; i >= 138; i--)
    {
       arregloBytesOrdenado[j]=(char *) malloc(sizeof(char)*2);
-      strcpy(arregloBytesOrdenado[j], estr->arregloBytes[i]);
+      strcpy(arregloBytesOrdenado[j], estr->par[i]);
       j++;
+      //free(estr->arregloBytes[i]);
    }
+   estr->cantidadDePares = estr->cantidadDePares - 138;
    estr->arregloBytesOrdenado=arregloBytesOrdenado;
-
-
-   for (i = 0; i <estr->cantidadDePares-138; ++i)
-   {
-      free(estr->arregloBytes[i]);
-   }
-   free(estr->arregloBytes);
+   //free(estr->arregloBytes);
    return estr;
 }
 

@@ -4,8 +4,6 @@
 #include <unistd.h>
 #include "header_estructuras.h"	
 
-
-
 /*
 argv[1] => nombre de la imagen.
 */
@@ -14,8 +12,7 @@ void main(int argc, char *argv[]){
 	unsigned char* cabeza_imagen=(unsigned char*)malloc(sizeof(unsigned char)*138);
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
 	Estructura* es=leerImagen("imagen_2.bmp");
-	es = cortarArreglo(es);
-	es = invertirArreglo(es);
+	es = cortarEInvertirArreglo(es);
 	for(int i=0;i<138;i++){
 		mp->cabeza_imagen[i]=stringAHexadecimal(es->par[i]);
 		//printf("iteracion:%i dentro:%i\n", i,cabeza_imagen[i]);
