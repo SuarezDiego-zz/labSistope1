@@ -162,10 +162,20 @@ void main(int argc, char *argv[]){
 
 		mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 		pipe(mp->pipefd);
-		strcpy(mp->nombreImagen, numeroDeImagen);
+		int g;
+		for(g=0;g<strlen(numeroDeImagen);g++){
+			mp->nombreImagen[g]=numeroDeImagen[g];
+		}
+		mp->nombreImagen[g]='\0';
 		printf("ANTES DEL PIPE: %s\n", mp->nombreImagen);
-		//strcpy(mp->nombreImagenBinSalida, nombreImagenSalidaBinario);
-		//strcpy(mp->nombreImagenBNSalida, nombreImagenSalidaEscalaG);
+		for(g=0;g<strlen(nombreImagenSalidaBinario);g++){
+			mp->nombreImagenBinSalida[g]=nombreImagenSalidaBinario[g];
+		}
+		mp->nombreImagenBinSalida[g]='\0';
+		for(g=0;g<strlen(nombreImagenSalidaEscalaG);g++){
+			mp->nombreImagenBNSalida[g]=nombreImagenSalidaEscalaG[g];
+		}
+		mp->nombreImagenBNSalida[g]='\0';
 
 		write(mp->pipefd[1],mp,sizeof(MensajePipe));
 		
