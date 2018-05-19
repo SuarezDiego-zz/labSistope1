@@ -20,20 +20,14 @@ void main(int argc, char *argv[]){
 		mp->cabeza_imagen[i]=stringAHexadecimal(es->par[i]);
 		//printf("iteracion:%i dentro:%i\n", i,cabeza_imagen[i]);
 	}
-	//mp->cabeza_imagen = *cabeza_imagen;
 	mp->cantidadDePares=es->cantidadDePares;
 	int o;
 	Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
-	//mp->pixeles=(Pixel)malloc((mp->cantidadDePares/4)*sizeof(Pixel));
-	
 	for(o=0;o<es->cantidadDePares/4;o++){
 		free(es->arregloBytesOrdenado[o]);
 	}
 	free(es->arregloBytesOrdenado);
-	for (int j = 0; j < 10; j++){
-		//printf("%i\n", pixeles[j].red);
-		printf("%i\n", mp->cabeza_imagen[j]);
-	}
+	strcpy(mp->nombreImagen, "imagen_2.bmp");
 	printf("%d\n",mp->cantidadDePares/4 );
 	write(mp->pipefd[1], mp,sizeof(MensajePipe));
 	printf("lector_de_imagen\n");

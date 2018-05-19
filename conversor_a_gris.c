@@ -35,21 +35,9 @@ Se debe tener acceso a pixeles, el cual sale del proceso anterior y a Estructura
 argv[1] => nombreImagenSalidaEscalaG.
 */
 void main(int argc, char *argv[]){
-	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe)+2000);
+	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
-	strcpy(mp->nombreImagen, "imagen_2.bmp");
-
-	Pixel* pixeles= obtenerPixelesPipe(mp);
-	printf("%i\n",mp->cantidadDePares );
-	//printf("%i\n", ppp[0].red);
-	/*
-	for (int j = 0; j < 138; j++){printf("%i\n", ci[j]);}
-	*/
-	for (int j = 0; j < 10; j++){
-		//printf("%i\n", pixeles[j].red);
-		printf("%i\n", mp->cabeza_imagen[j]);
-	}
-	
+	Pixel* pixeles= obtenerPixelesPipe(mp);	
 	Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,mp->cantidadDePares/4);
 	escribirImagen(pixelesbn,mp->cabeza_imagen,"pico.bmp", mp->cantidadDePares);
 	free(pixelesbn);
