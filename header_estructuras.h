@@ -19,6 +19,8 @@ typedef struct{
    int pipefd[2];
    int cantidadDePares;
    char nombreImagen[12];
+   char nombreImagenBinSalida[13];
+   char nombreImagenBNSalida[13];
 }MensajePipe;
 
 long calcularTamano(char* nombreArchivo);

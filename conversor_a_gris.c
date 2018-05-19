@@ -39,7 +39,8 @@ void main(int argc, char *argv[]){
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
 	Pixel* pixeles= obtenerPixelesPipe(mp);	
 	Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,mp->cantidadDePares/4);
-	escribirImagen(pixelesbn,mp->cabeza_imagen,"pico.bmp", mp->cantidadDePares);
+	//printf("el nombre es: %s\n", mp->nombreImagenBNSalida);
+	escribirImagen(pixelesbn,mp->cabeza_imagen,"hola.bmp", mp->cantidadDePares);
 	free(pixelesbn);
 	printf("conversor_a_gris\n");
 	//write(mp->pipefd[1],mp,sizeof(MensajePipe));

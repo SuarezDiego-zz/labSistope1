@@ -13,7 +13,9 @@ void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	unsigned char* cabeza_imagen=(unsigned char*)malloc(sizeof(unsigned char)*138);
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
-	Estructura* es=leerImagen("imagen_2.bmp");
+	printf("SE EJECUTA ACA\n");
+	printf("SALIDO DEL PIPE: %s\n", mp->nombreImagen);
+	Estructura* es=leerImagen(mp->nombreImagen);
 	es = cortarArreglo(es);
 	es = invertirArreglo(es);
 	for(int i=0;i<138;i++){
@@ -27,7 +29,6 @@ void main(int argc, char *argv[]){
 		free(es->arregloBytesOrdenado[o]);
 	}
 	free(es->arregloBytesOrdenado);
-	strcpy(mp->nombreImagen, "imagen_2.bmp");
 	printf("%d\n",mp->cantidadDePares/4 );
 	write(mp->pipefd[1], mp,sizeof(MensajePipe));
 	printf("lector_de_imagen\n");
