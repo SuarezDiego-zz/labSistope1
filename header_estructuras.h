@@ -17,9 +17,12 @@ typedef struct{
    Pixel* pixeles;
    int pipefd[2];
    int cantidadDePares;
+   int umbralBinarizacion;
+   int umbralNB;
    char nombreImagen[20];
    char nombreImagenBinSalida[20];
    char nombreImagenBNSalida[20];
+   int esNearlyBlack;
 }MensajePipe;
 
 long calcularTamano(char* nombreArchivo);

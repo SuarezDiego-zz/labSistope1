@@ -40,10 +40,10 @@ void main(int argc, char *argv[]){
 	Pixel* pixeles= obtenerPixelesPipe(mp);	
 	Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,mp->cantidadDePares/4);
 	//printf("el nombre es: %s\n", mp->nombreImagenBNSalida);
-	escribirImagen(pixelesbn,mp->cabeza_imagen,"hola.bmp", mp->cantidadDePares);
+	escribirImagen(pixelesbn,mp->cabeza_imagen,mp->nombreImagenBNSalida, mp->cantidadDePares);
 	free(pixelesbn);
 	printf("conversor_a_gris\n");
-	//write(mp->pipefd[1],mp,sizeof(MensajePipe));
+	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 	printf("proc 2\n");
 	
 }

@@ -162,6 +162,8 @@ void main(int argc, char *argv[]){
 
 		mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 		pipe(mp->pipefd);
+		mp->umbralBinarizacion = umbral_b;
+		mp->umbralNB = umbral_nb;
 		int g;
 		for(g=0;g<strlen(numeroDeImagen);g++){
 			mp->nombreImagen[g]=numeroDeImagen[g];

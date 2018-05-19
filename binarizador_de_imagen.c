@@ -35,14 +35,15 @@ argv[1] => umbral_b
 argv[2] => nombreImagenSalidaBinario
 */
 void main(int argc, char *argv[]){
-	/*
+	
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
-	Pixel* pixelesbinario=pixeles_binario(mp->pixeles,mp->cantidadDePares/4,argv[1]);
-	escribirImagen(pixelesbinario,mp->cabeza_imagen,"picoBinario.bmp", mp->cantidadDePares);
+	Pixel* pixeles= obtenerPixelesPipe(mp);
+	Pixel* pixelesbinario=pixeles_binario(pixeles,mp->cantidadDePares/4,mp->umbralBinarizacion);
+	escribirImagen(pixelesbinario,mp->cabeza_imagen,mp->nombreImagenBinSalida, mp->cantidadDePares);
 	free(pixelesbinario);
 	printf("binarizador_de_imagen\n");
 	write(mp->pipefd[1],mp,sizeof(MensajePipe));
 	printf("proc 3\n");
-	*/
+	
 }
