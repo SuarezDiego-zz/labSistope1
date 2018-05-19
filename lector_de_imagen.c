@@ -4,8 +4,6 @@
 #include <unistd.h>
 #include "header_estructuras.h"	
 
-
-
 /*
 argv[1] => nombre de la imagen.
 */
@@ -16,8 +14,8 @@ void main(int argc, char *argv[]){
 	printf("SE EJECUTA ACA\n");
 	printf("SALIDO DEL PIPE: %s\n", mp->nombreImagen);
 	Estructura* es=leerImagen(mp->nombreImagen);
-	es = cortarArreglo(es);
-	es = invertirArreglo(es);
+	es = cortarEInvertirArreglo(es);
+
 	for(int i=0;i<138;i++){
 		mp->cabeza_imagen[i]=stringAHexadecimal(es->par[i]);
 		//printf("iteracion:%i dentro:%i\n", i,cabeza_imagen[i]);
