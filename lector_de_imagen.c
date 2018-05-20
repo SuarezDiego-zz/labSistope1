@@ -4,21 +4,15 @@
 #include <unistd.h>
 #include "header_estructuras.h"	
 
-/*
-argv[1] => nombre de la imagen.
-*/
 void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	unsigned char* cabeza_imagen=(unsigned char*)malloc(sizeof(unsigned char)*138);
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
-	printf("SE EJECUTA ACA\n");
-	printf("SALIDO DEL PIPE: %s\n", mp->nombreImagen);
 	Estructura* es=leerImagen(mp->nombreImagen);
 	es = cortarEInvertirArreglo(es);
 
 	for(int i=0;i<138;i++){
 		mp->cabeza_imagen[i]=stringAHexadecimal(es->par[i]);
-		//printf("iteracion:%i dentro:%i\n", i,cabeza_imagen[i]);
 	}
 	mp->cantidadDePares=es->cantidadDePares;
 	int o;
@@ -27,7 +21,5 @@ void main(int argc, char *argv[]){
 		free(es->arregloBytesOrdenado[o]);
 	}
 	free(es->arregloBytesOrdenado);
-	printf("%d\n",mp->cantidadDePares/4 );
 	write(mp->pipefd[1], mp,sizeof(MensajePipe));
-	printf("lector_de_imagen\n");
 }

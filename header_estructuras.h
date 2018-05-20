@@ -109,7 +109,7 @@ Pixel* obtenerPixelesPipe(MensajePipe* p){
 
 /*
 Entrada: Estructura que guarda todos los arreglos necesarios para el procesamiento.
-Salida: Misma estructura que entra pero con un arreglo adicional que contiene los pixeles invertidos.
+Salida: Misma estructura que entra pero con un arreglo adicional que contiene los pixeles invertidos de la imagen.
 Descripcion: Funcion que recorre e invierte el orden de los pixeles en un nuevo arreglo.
 */
 Estructura* cortarEInvertirArreglo(Estructura* estr){
@@ -339,4 +339,58 @@ Pixel* pixeles_binario(Pixel* punteroPix, int cantidadPixeles, int umbral){
    return punteroPixelesBinario;
 }
 
+/*
+Entrada: Arreglo con pixeles, cantidad de pixeles y un umbral.
+Salida: Entero. En caso de ser 1, la imagen es cercana a negro, en caso contrario, no lo es.
+Descripcion: Funcion que permite determinar si una imagen es cercana a negro.
+*/
+int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
+  int i;
+  float porcentajeBlanco;
+  long contador_negros=0;
+  Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
+  for(i=0;i<cantidadPixeles;i++){
+    punteroPixelesBinario[i]=pixel_a_negro(punteroPix[i]);
+    porcentajeBlanco=(100*punteroPixelesBinario[i].red)/255;
+    if(porcentajeBlanco<=umbral){
+      contador_negros=contador_negros+1;
+    }
+  }
+  if((contador_negros*100)>((cantidadPixeles-contador_negros)*100)){
+    return 1;
+  }
+  else{
+    return 0;
+  }
+}
 
+/*
+Entrada: Arreglo con la imagen en escala de gris y la imagen binarizada, nombre que tendra el archivo que se escribe.
+Salida: Ninguna.
+Descripcion: Funcion que permite escribir las nuevas imagenes. Una en escala de grises y la otra binarizada segun el umbral
+entregado por el usuario. Por otra parte, esta funcion tambien calcula las dimensiones que debe tener el archivo de salida a
+traves de la cabecera de la imagen original.
+*/
+void escribirImagen(Pixel* punteroPixeles, unsigned char* header, char* nombreArchivo, int cantidadDePares){
+   int i;
+   unsigned long x;
+   int j=138;
+   unsigned char* punteroFormatoSalida=(unsigned char*)malloc(sizeof(unsigned char)*(cantidadDePares+138));
+   FILE *archivoSalida;
+   archivoSalida = fopen(nombreArchivo, "wb");
+   
+   for(i=0;i<138;i++){
+      punteroFormatoSalida[i]=header[i];
+   }
+   for (i = (cantidadDePares/4)-1 ; i >= 0; i--){
+      punteroFormatoSalida[j+3]= punteroPixeles[i].v;
+      punteroFormatoSalida[j+2]=punteroPixeles[i].red;
+      punteroFormatoSalida[j+1]=punteroPixeles[i].green;
+      punteroFormatoSalida[j]=punteroPixeles[i].blue;
+      j=j+4;
+   }
+
+   x=(punteroFormatoSalida[5]*16777216)+(punteroFormatoSalida[4]*65536)+(punteroFormatoSalida[3]*256)+(punteroFormatoSalida[2]);
+   fwrite(punteroFormatoSalida,x,1,archivoSalida);
+   fclose(archivoSalida);
+}
