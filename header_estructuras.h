@@ -22,6 +22,7 @@ typedef struct{
    char nombreImagen[20];
    char nombreImagenBinSalida[20];
    char nombreImagenBNSalida[20];
+   int bandera;
    int esNearlyBlack;
 }MensajePipe;
 

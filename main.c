@@ -95,7 +95,7 @@ void main(int argc, char *argv[]){
 			mp->nombreImagenBNSalida[g]=nombreImagenSalidaEscalaG[g];
 		}
 		mp->nombreImagenBNSalida[g]='\0';
-
+		mp->bandera=bandera;
 		write(mp->pipefd[1],mp,sizeof(MensajePipe));
 		
 
