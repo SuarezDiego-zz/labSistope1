@@ -8,9 +8,9 @@ void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));
 	if(mp->esNearlyBlack==1){
-		printf("|  %s  |       yes      |\n",mp->nombreImagen,mp->esNearlyBlack);
+		printf("|  %s  |       yes      |\n",mp->nombreImagen);
 	}
 	else{
-		printf("|  %s  |       no       |\n",mp->nombreImagen,mp->esNearlyBlack);
+		printf("|  %s  |       no       |\n",mp->nombreImagen);
 	}
 }

@@ -345,9 +345,9 @@ Salida: Entero. En caso de ser 1, la imagen es cercana a negro, en caso contrari
 Descripcion: Funcion que permite determinar si una imagen es cercana a negro.
 */
 int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
-  int i;
+  long i;
   float porcentajeBlanco;
-  long contador_negros=0;
+  unsigned long contador_negros=0;
   Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
   for(i=0;i<cantidadPixeles;i++){
     punteroPixelesBinario[i]=pixel_a_negro(punteroPix[i]);
