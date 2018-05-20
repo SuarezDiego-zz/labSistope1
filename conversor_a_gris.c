@@ -4,6 +4,10 @@
 #include <unistd.h>
 #include "header_estructuras.h"
 
+/*
+Proceso encargado de transformar una imagen a escala de grises y generar la imagen en base a la formula
+entregada. Hace uso de la estructura MensajePipe para obtener los datos de la imagen y hacer la conversion.
+*/
 void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));

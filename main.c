@@ -4,6 +4,13 @@
 #include <unistd.h>
 #include "header_estructuras.h"
 
+/*
+Funcion principal que comienza con la ejecucion del programa. Esta funcion que gatilla la
+ejecucion de todos los procesos que permitiran la transformacion a escala de grises y binarizacion
+de tantas imagenes como indique el usuario. La funcion hace uso de fork() para replicarse y 
+logra que en el espacio del hijo se llame a cada proceso. Cada proceso debe esperar que su
+antecesor haya terminado su ejecucion.
+*/
 void main(int argc, char *argv[]){
 	int status_lector_de_imagen;
 	int status_conversor_a_gris;

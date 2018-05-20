@@ -4,6 +4,11 @@
 #include <unistd.h>
 #include "header_estructuras.h"	
 
+/*
+Proceso encargado de leer la imagen y convertirla en arreglos utiles para las etapas posteriores.
+La cabecera de la imagen y su cuerpo, entre otros datos de utilidad son enviados a procesos siguientes
+a traves del uso de pipes.
+*/
 void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	unsigned char* cabeza_imagen=(unsigned char*)malloc(sizeof(unsigned char)*138);

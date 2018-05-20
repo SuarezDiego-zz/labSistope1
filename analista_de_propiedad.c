@@ -4,6 +4,11 @@
 #include <unistd.h>
 #include "header_estructuras.h"
 
+/*
+Proceso encargado de clasificar las imagenes segun si son cercanos a negro o no (nearly black).
+Luego de clasificar si la imagen cumple con el requisito de ser nearly black segun el umbral definido, envia la 
+informacion por el pipe hacia el siguiente proceso.
+*/
 void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));

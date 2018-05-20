@@ -4,6 +4,11 @@
 #include <unistd.h>
 #include "header_estructuras.h"
 
+/*
+Proceso encargado de transformar una imagen a blanco y negro a partir
+del umbral definido por el usuario. Hace uso de la estructura MensajePipe para 
+obtener los datos de la imagen y hacer la conversion segun lo indicado al momento de la ejecucion del archivo main.
+*/
 void main(int argc, char *argv[]){
 	MensajePipe* mp=(MensajePipe*)malloc(sizeof(MensajePipe));
 	read(STDIN_FILENO, mp, sizeof(MensajePipe));

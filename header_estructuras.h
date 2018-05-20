@@ -1,3 +1,8 @@
+
+
+/*
+Definicion de estructuras.
+*/
 typedef struct {
 	int red;
 	int green;
@@ -26,6 +31,9 @@ typedef struct{
    int esNearlyBlack;
 }MensajePipe;
 
+/*
+Cabeceras de funciones
+*/
 long calcularTamano(char* nombreArchivo);
 Estructura* leerImagen(char* nombreArchivo);
 Estructura* cortarEInvertirArreglo(Estructura* estr);
@@ -38,6 +46,7 @@ int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral);
 void escribirImagen(Pixel* punteroPixeles, unsigned char* header, char* nombreArchivo, int cantidadDePares);
 void main(int argc, char *argv[]);
 
+//DEFINICION DE FUNCIONES
 
 /*
 Entrada: Nombre de un archivo con formato bmp.
@@ -110,8 +119,9 @@ Pixel* obtenerPixelesPipe(MensajePipe* p){
 
 /*
 Entrada: Estructura que guarda todos los arreglos necesarios para el procesamiento.
-Salida: Misma estructura que entra pero con un arreglo adicional que contiene los pixeles invertidos de la imagen.
-Descripcion: Funcion que recorre e invierte el orden de los pixeles en un nuevo arreglo.
+Salida: Misma estructura que entra pero con un arreglo adicional que contiene los pixeles invertidos de la imagen sin
+la cabecera.
+Descripcion: Funcion que recorre para cortar e invertir el orden de los pixeles en un nuevo arreglo.
 */
 Estructura* cortarEInvertirArreglo(Estructura* estr){
    int j=0;
