@@ -21,6 +21,8 @@ typedef struct{
    int umbral;
 }EstructuraProcesadorDePixeles;
 
+Estructura* arr = NULL;
+
 /*
 Cabeceras de funciones
 */
@@ -71,13 +73,14 @@ Descripcion: Funcion encargada de leer los bytes de la imagen y guardalos en un 
 una imagen por pantalla.
 */
 void leerImagen(void* nombreArchivo){
+   arr = (Estructura*)malloc(sizeof(Estructura));
    char* _nombreArchivo = (char*) nombreArchivo;
    int x;
    int j=0;
-   long largo = calcularTamano(nombreArchivo);
-   Estructura* arr = (Estructura*)malloc(sizeof(Estructura));
+   long largo = calcularTamano(_nombreArchivo);
+   
    FILE *archivoEntrada;
-   archivoEntrada = fopen(nombreArchivo, "rb");
+   archivoEntrada = fopen(_nombreArchivo, "rb");
    if (archivoEntrada == NULL)
    {
       printf("No se ha encontrado imagen. \n");
@@ -98,7 +101,6 @@ void leerImagen(void* nombreArchivo){
    arr->cantidadDePares = j-1;
    fclose(archivoEntrada);
    arr->largo = largo;
-   return arr;
 }
 
 /*

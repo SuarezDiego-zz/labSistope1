@@ -6,6 +6,7 @@
 #include "header_estructuras.h"
 
 
+
 void main(int argc, char *argv[]){
 	int cantidad, umbral_b, umbral_nb;
   int cantidad_hebras = 0;
@@ -21,6 +22,7 @@ void main(int argc, char *argv[]){
   char* imagen = "imagen_";
   char* imagenBinarizadaBase = "binario_";
   char* imagenEscalaGrisesBase = "blancoynegro_";
+  
   while ((opt = getopt (argc, argv, "c:h:u:n:b")) != -1){
     switch (opt){
       case 'c':
@@ -57,6 +59,7 @@ void main(int argc, char *argv[]){
     strcat(nombreImagenSalidaBinario, ".bmp");
     pthread_create(&hebras[0], NULL, (void*) &leerImagen, (void*) numeroDeImagen);
     pthread_join(hebras[0], NULL);
+    printf("funciona %s\n", arr->par[0]);
     printf("LLEGA\n");
     //es=cortarEInvertirArreglo(es);
     //Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
