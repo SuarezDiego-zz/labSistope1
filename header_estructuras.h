@@ -1,5 +1,3 @@
-
-
 /*
 Definicion de estructuras.
 */
@@ -17,19 +15,6 @@ typedef struct{
    long largo;
 }Estructura;
 
-typedef struct{
-   unsigned char cabeza_imagen[138];
-   Pixel* pixeles;
-   int pipefd[2];
-   int cantidadDePares;
-   int umbralBinarizacion;
-   int umbralNB;
-   char nombreImagen[20];
-   char nombreImagenBinSalida[20];
-   char nombreImagenBNSalida[20];
-   int bandera;
-   int esNearlyBlack;
-}MensajePipe;
 
 /*
 Cabeceras de funciones
@@ -43,7 +28,7 @@ Pixel pixel_a_negro(Pixel pix);
 Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles);
 Pixel* pixeles_binario(Pixel* punteroPix, int cantidadPixeles, int umbral);
 int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral);
-void escribirImagen(Pixel* punteroPixeles, unsigned char* header, char* nombreArchivo, int cantidadDePares);
+void escribirImagen(Pixel* punteroPixeles, Estructura* est, char* nombreArchivo);
 void main(int argc, char *argv[]);
 
 //DEFINICION DE FUNCIONES
@@ -108,13 +93,6 @@ Estructura* leerImagen(char* nombreArchivo){
    fclose(archivoEntrada);
    arr->largo = largo;
    return arr;
-}
-
-Pixel* obtenerPixelesPipe(MensajePipe* p){
-   Estructura* es=leerImagen(p->nombreImagen);
-   es = cortarEInvertirArreglo(es);
-   Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
-   return pixeles;
 }
 
 /*
@@ -382,16 +360,17 @@ Descripcion: Funcion que permite escribir las nuevas imagenes. Una en escala de 
 entregado por el usuario. Por otra parte, esta funcion tambien calcula las dimensiones que debe tener el archivo de salida a
 traves de la cabecera de la imagen original.
 */
-void escribirImagen(Pixel* punteroPixeles, unsigned char* header, char* nombreArchivo, int cantidadDePares){
+void escribirImagen(Pixel* punteroPixeles, Estructura* est, char* nombreArchivo){
    int i;
    unsigned long x;
    int j=138;
+   double cantidadDePares= est->cantidadDePares;
    unsigned char* punteroFormatoSalida=(unsigned char*)malloc(sizeof(unsigned char)*(cantidadDePares+138));
    FILE *archivoSalida;
    archivoSalida = fopen(nombreArchivo, "wb");
    
    for(i=0;i<138;i++){
-      punteroFormatoSalida[i]=header[i];
+      punteroFormatoSalida[i]=stringAHexadecimal(est->par[i]);
    }
    for (i = (cantidadDePares/4)-1 ; i >= 0; i--){
       punteroFormatoSalida[j+3]= punteroPixeles[i].v;
