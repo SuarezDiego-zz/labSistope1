@@ -21,7 +21,7 @@ void main(int argc, char *argv[]){
   char* imagen = "imagen_";
   char* imagenBinarizadaBase = "binario_";
   char* imagenEscalaGrisesBase = "blancoynegro_";
-  while ((opt = getopt (argc, argv, "c:u:n:b")) != -1){
+  while ((opt = getopt (argc, argv, "c:h:u:n:b")) != -1){
     switch (opt){
       case 'c':
         cantidad = atoi(optarg);

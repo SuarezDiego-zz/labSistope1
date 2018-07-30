@@ -25,7 +25,7 @@ typedef struct{
 Cabeceras de funciones
 */
 long calcularTamano(char* nombreArchivo);
-Estructura* leerImagen(char* nombreArchivo);
+void leerImagen(void* nombreArchivo);
 Estructura* cortarEInvertirArreglo(Estructura* estr);
 int stringAHexadecimal(char* stringEntrada);
 Pixel* crearArregloPixeles(Estructura* estr);
@@ -70,7 +70,8 @@ Salida: un arreglo con todos los bytes de la imagen.
 Descripcion: Funcion encargada de leer los bytes de la imagen y guardalos en un arreglo. En caso de que no exista la imagen, se muestra
 una imagen por pantalla.
 */
-Estructura* leerImagen(char* nombreArchivo){
+void leerImagen(void* nombreArchivo){
+   char* _nombreArchivo = (char*) nombreArchivo;
    int x;
    int j=0;
    long largo = calcularTamano(nombreArchivo);
