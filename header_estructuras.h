@@ -19,20 +19,20 @@ typedef struct{
    Pixel* punteroPix;
    int cantidadPixeles;
    int umbral;
-}ProesadorDePixeles;
+}EstructuraProcesadorDePixeles;
 
 /*
 Cabeceras de funciones
 */
 long calcularTamano(char* nombreArchivo);
-void leerImagen(void* nombreArchivo);
+Estructura* leerImagen(char* nombreArchivo);
 Estructura* cortarEInvertirArreglo(Estructura* estr);
 int stringAHexadecimal(char* stringEntrada);
-Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles);
+Pixel* crearArregloPixeles(Estructura* estr);
 Pixel pixel_a_negro(Pixel pix);
-Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles);
-Pixel* pixeles_binario(Pixel* punteroPix, int cantidadPixeles, int umbral);
-int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral);
+Pixel* pixeles_blanco_y_negro(EstructuraProcesadorDePixeles epdp);
+Pixel* pixeles_binario(EstructuraProcesadorDePixeles epdp);
+int nearlyBlack(EstructuraProcesadorDePixeles epdp);
 void escribirImagen(Pixel* punteroPixeles, Estructura* est, char* nombreArchivo);
 void main(int argc, char *argv[]);
 
@@ -47,7 +47,6 @@ long calcularTamano(char* nombreArchivo){
    long largo;
    int x;
    FILE *archivoEntrada;
-   printf("%s\n", nombreArchivo);
    archivoEntrada = fopen(nombreArchivo, "rb");
    unsigned char *bytesTamano = (unsigned char*) malloc(sizeof(unsigned char)*5);
    for(x=0;x<6;x++){
@@ -71,10 +70,8 @@ Salida: un arreglo con todos los bytes de la imagen.
 Descripcion: Funcion encargada de leer los bytes de la imagen y guardalos en un arreglo. En caso de que no exista la imagen, se muestra
 una imagen por pantalla.
 */
-void leerImagen(void* nombreArchivo){
-   char* _nombreArchivo = (char*) nombreArchivo;
+Estructura* leerImagen(char* nombreArchivo){
    int x;
-   printf("ENTRAMOS\n");
    int j=0;
    long largo = calcularTamano(nombreArchivo);
    Estructura* arr = (Estructura*)malloc(sizeof(Estructura));
@@ -266,7 +263,9 @@ Entrada: Arreglo con todos los pixeles de la imagen en hexadecimal y un entero q
 Salida: Arreglo con todos los pixeles convertidos a entero.
 Descripcion: Funcion que de todos los datos de la imagen crea un arreglo de pixeles.
 */
-Pixel* crearArregloPixeles(char** punteroStr,int cantidadPixeles){
+Pixel* crearArregloPixeles(Estructura* estr){ 
+   char** punteroStr=estr->arregloBytesOrdenado; 
+   int cantidadPixeles=estr->cantidadDePares/4;
    int i;
    Pixel* punteroPixel=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
    for(i=0;i<cantidadPixeles;i++){
@@ -298,7 +297,9 @@ Entrada: Arreglo con pixeles y la cantidad de pixeles
 Salida: Arreglo con todos los pixeles convertidos a escala de grises.
 Descripcion: Funcion que transforma todos los pixeles de un arreglo a una escala de grises.
 */
-Pixel* pixeles_blanco_y_negro(Pixel* punteroPix, int cantidadPixeles){
+Pixel* pixeles_blanco_y_negro(EstructuraProcesadorDePixeles epdp){
+   Pixel* punteroPix=epdp.punteroPix;
+   int cantidadPixeles=epdp.cantidadPixeles;
    int i;
    Pixel* punteroPixelesBlancoYNegro=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
    for(i=0;i<cantidadPixeles;i++){
@@ -314,7 +315,10 @@ Descripcion: Funcion que transforma todos los pixeles de un arreglo a una imagen
 que contiene solo los colores blanco y negro. Esto depende de si el color esta por sobre el umbral
 entonces el pixel sera blanco, en caso contrario, es negro.
 */
-Pixel* pixeles_binario(Pixel* punteroPix, int cantidadPixeles, int umbral){
+Pixel* pixeles_binario(EstructuraProcesadorDePixeles epdp){
+   Pixel* punteroPix=epdp.punteroPix;
+   int cantidadPixeles=epdp.cantidadPixeles;
+   int umbral=epdp.umbral;
    int i;
    float porcentajeBlanco;
    Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
@@ -341,24 +345,27 @@ Entrada: Arreglo con pixeles, cantidad de pixeles y un umbral.
 Salida: Entero. En caso de ser 1, la imagen es cercana a negro, en caso contrario, no lo es.
 Descripcion: Funcion que permite determinar si una imagen es cercana a negro.
 */
-int nearlyBlack(Pixel* punteroPix, int cantidadPixeles, int umbral){
-  long i;
-  float porcentajeBlanco;
-  unsigned long contador_negros=0;
-  Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
-  for(i=0;i<cantidadPixeles;i++){
+int nearlyBlack(EstructuraProcesadorDePixeles epdp){
+   Pixel* punteroPix=epdp.punteroPix;
+   int cantidadPixeles=epdp.cantidadPixeles;
+   int umbral=epdp.umbral;
+   long i;
+   float porcentajeBlanco;
+   unsigned long contador_negros=0;
+   Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
+   for(i=0;i<cantidadPixeles;i++){
     punteroPixelesBinario[i]=pixel_a_negro(punteroPix[i]);
     porcentajeBlanco=(100*punteroPixelesBinario[i].red)/255;
     if(porcentajeBlanco<=umbral){
       contador_negros=contador_negros+1;
     }
-  }
-  if((contador_negros*100)>((cantidadPixeles-contador_negros)*100)){
-    return 1;
-  }
-  else{
-    return 0;
-  }
+   }
+   if((contador_negros*100)>((cantidadPixeles-contador_negros)*100)){
+      return 1;
+   }
+   else{
+      return 0;
+   }
 }
 
 /*
