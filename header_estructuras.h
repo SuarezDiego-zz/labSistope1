@@ -15,6 +15,11 @@ typedef struct{
    long largo;
 }Estructura;
 
+typedef struct{
+   Pixel* punteroPix;
+   int cantidadPixeles;
+   int umbral;
+}ProesadorDePixeles;
 
 /*
 Cabeceras de funciones
