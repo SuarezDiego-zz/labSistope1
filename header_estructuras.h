@@ -22,7 +22,13 @@ typedef struct{
 }EstructuraProcesadorDePixeles;
 
 Estructura* arr = NULL;
-
+unsigned long contHebrasNearlyBlack=0;
+int resultadoNearlyBlack=0;
+int pixelesXhebra=0;
+unsigned long cantidadPixelesNegros=0;
+pthread_mutex_t lock;
+int cantidad_hebras = 0;
+pthread_t hebras[];
 /*
 Cabeceras de funciones
 */
@@ -34,7 +40,7 @@ Pixel* crearArregloPixeles(Estructura* estr);
 Pixel pixel_a_negro(Pixel pix);
 Pixel* pixeles_blanco_y_negro(EstructuraProcesadorDePixeles epdp);
 Pixel* pixeles_binario(EstructuraProcesadorDePixeles epdp);
-int nearlyBlack(EstructuraProcesadorDePixeles epdp);
+void nearlyBlack(void*  _epdp);
 void escribirImagen(Pixel* punteroPixeles, Estructura* est, char* nombreArchivo);
 void main(int argc, char *argv[]);
 
@@ -348,26 +354,35 @@ Entrada: Arreglo con pixeles, cantidad de pixeles y un umbral.
 Salida: Entero. En caso de ser 1, la imagen es cercana a negro, en caso contrario, no lo es.
 Descripcion: Funcion que permite determinar si una imagen es cercana a negro.
 */
-int nearlyBlack(EstructuraProcesadorDePixeles epdp){
-   Pixel* punteroPix=epdp.punteroPix;
-   int cantidadPixeles=epdp.cantidadPixeles;
-   int umbral=epdp.umbral;
-   long i;
+void nearlyBlack(void*  _epdp){
+   EstructuraProcesadorDePixeles* epdp = (EstructuraProcesadorDePixeles*) _epdp;
+   Pixel* punteroPix=epdp->punteroPix;
+   int cantidadPixeles=epdp->cantidadPixeles;
+   int umbral=epdp->umbral;
+   long i,j;
    float porcentajeBlanco;
-   unsigned long contador_negros=0;
-   Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
-   for(i=0;i<cantidadPixeles;i++){
-    punteroPixelesBinario[i]=pixel_a_negro(punteroPix[i]);
-    porcentajeBlanco=(100*punteroPixelesBinario[i].red)/255;
-    if(porcentajeBlanco<=umbral){
-      contador_negros=contador_negros+1;
-    }
+   pthread_mutex_lock(&lock);
+   contHebrasNearlyBlack++;
+   pthread_mutex_unlock(&lock);
+   printf("cont hebras %i\n", contHebrasNearlyBlack);
+   for(i=((contHebrasNearlyBlack-1)*pixelesXhebra);i<contHebrasNearlyBlack*pixelesXhebra;i++){
+      porcentajeBlanco=(100*(punteroPix[i].red*0.3+punteroPix[i].green*0.59+punteroPix[i].blue*0.11))/255;
+      if(porcentajeBlanco<=umbral){
+         pthread_mutex_lock(&lock);
+         cantidadPixelesNegros++;
+         pthread_mutex_unlock(&lock);
+      }
    }
-   if((contador_negros*100)>((cantidadPixeles-contador_negros)*100)){
-      return 1;
+
+   for(j=1;j<=cantidad_hebras;j++){//con j=1 o j=0?
+      pthread_join(hebras[j], NULL);
+   }
+
+   if((cantidadPixelesNegros*100)>((cantidadPixeles-cantidadPixelesNegros)*100)){
+      resultadoNearlyBlack=1;
    }
    else{
-      return 0;
+      resultadoNearlyBlack=0;
    }
 }
 

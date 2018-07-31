@@ -5,11 +5,8 @@
 #include <pthread.h>
 #include "header_estructuras.h"
 
-
-
 void main(int argc, char *argv[]){
 	int cantidad, umbral_b, umbral_nb;
-  int cantidad_hebras = 0;
   int bandera = 0;
   int opt;
   char numeroDeImagen[100];
@@ -45,7 +42,8 @@ void main(int argc, char *argv[]){
   if (bandera == 1){
     printf("imagen        nearly black\n");
   }
-  pthread_t hebras[cantidad_hebras];
+  cantidad_hebras=1;//2 hebras -------------------------papeo
+  hebras[cantidad_hebras];
   for (int i = 0; i < cantidad; i++){
     sprintf(contador, "%d", i+1);
     strcat(numeroDeImagen, imagen);
@@ -75,6 +73,35 @@ void main(int argc, char *argv[]){
         printf("%s        no\n", numeroDeImagen); 
       }
     }*/
+
+
+
+
+    //inicio nearly black
+    
+    int j;
+    pthread_mutex_init(&lock, NULL);
+    arr=cortarEInvertirArreglo(arr);
+    Pixel* pixeles=crearArregloPixeles(arr);
+    EstructuraProcesadorDePixeles* epdp=(EstructuraProcesadorDePixeles*)malloc(sizeof(EstructuraProcesadorDePixeles));;
+    epdp->punteroPix=pixeles;
+    epdp->cantidadPixeles=arr->cantidadDePares/4;
+    epdp->umbral=50;
+    pixelesXhebra= epdp->cantidadPixeles/(cantidad_hebras+1);
+    printf("cantidadPixeles%i\n",epdp->cantidadPixeles);
+    printf("pixelesXhebra%i\n",pixelesXhebra);
+    printf("cantidad de hebras%i\n",(cantidad_hebras+1) );
+    for(j=0;j<=cantidad_hebras;j++){
+      pthread_create(&hebras[j], NULL, (void*) &nearlyBlack, (void*) epdp);
+    }
+    for(j=0;j<=cantidad_hebras;j++){
+      pthread_join(hebras[j], NULL);
+    }
+    printf("resultado nearly black=%i\n",resultadoNearlyBlack);
+    pthread_mutex_destroy(&lock);
+    //fin nearly black
+
+
     strcpy(numeroDeImagen, "");
     strcpy(nombreImagenSalidaBinario, "");
     strcpy(nombreImagenSalidaEscalaG, "");
