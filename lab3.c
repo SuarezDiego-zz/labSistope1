@@ -69,8 +69,9 @@ void main(int argc, char *argv[]){
     ep->pixeles = crearArregloPixeles(ep->estructura);
     pixeles_blanco_y_negro(epdp);
     pixeles_binario(epdp);
-    //escribirImagen(pixelesbn,es,nombreImagenSalidaEscalaG);
-    //escribirImagen(pixelesbinario,es,nombreImagenSalidaBinario);
+    printf("PASA POR AQUI\n");
+    escribirImagen(ep->pixelesbinario,ep->estructura,nombreImagenSalidaEscalaG);
+    escribirImagen(ep->pixelesbn,ep->estructura,nombreImagenSalidaBinario);
     /*if (bandera == 1){
       if (nearlyBlack(pixeles,es->cantidadDePares/4,umbral_nb) ==1){
         printf("%s        yes\n", numeroDeImagen);
@@ -85,7 +86,7 @@ void main(int argc, char *argv[]){
 
     //inicio nearly black
     
-    int j;
+    /*int j;
     pthread_mutex_init(&lock, NULL);
     cortarEInvertirArreglo(ep->estructura);
     Pixel* pixeles=crearArregloPixeles(ep->estructura);
@@ -102,6 +103,7 @@ void main(int argc, char *argv[]){
     }
     printf("resultado nearly black=%i\n",resultadoNearlyBlack);
     pthread_mutex_destroy(&lock);
+    */
     //fin nearly black
 
 

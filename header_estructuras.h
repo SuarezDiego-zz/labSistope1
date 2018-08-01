@@ -50,8 +50,8 @@ void cortarEInvertirArreglo(Estructura* estr);
 int stringAHexadecimal(char* stringEntrada);
 Pixel* crearArregloPixeles(Estructura* estr);
 Pixel pixel_a_negro(Pixel pix);
-Pixel* pixeles_blanco_y_negro(EstructuraProcesadorDePixeles epdp);
-Pixel* pixeles_binario(EstructuraProcesadorDePixeles epdp);
+void pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp);
+void pixeles_binario(EstructuraProcesadorDePixeles* epdp);
 void nearlyBlack(void*  _epdp);
 void escribirImagen(Pixel* punteroPixeles, Estructura* est, char* nombreArchivo);
 void main(int argc, char *argv[]);
@@ -321,7 +321,7 @@ Entrada: Arreglo con pixeles y la cantidad de pixeles
 Salida: Arreglo con todos los pixeles convertidos a escala de grises.
 Descripcion: Funcion que transforma todos los pixeles de un arreglo a una escala de grises.
 */
-Pixel* pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
+void pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
    Pixel* punteroPix=epdp->punteroPix;
    int cantidadPixeles=epdp->cantidadPixeles;
    int i;
@@ -329,7 +329,7 @@ Pixel* pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
    for(i=0;i<cantidadPixeles;i++){
       punteroPixelesBlancoYNegro[i]=pixel_a_negro(punteroPix[i]);
    }
-   return punteroPixelesBlancoYNegro;
+   ep->pixelesbn = punteroPixelesBlancoYNegro;
 }
 
 /*
@@ -342,7 +342,7 @@ entonces el pixel sera blanco, en caso contrario, es negro.
 void pixeles_binario(EstructuraProcesadorDePixeles* epdp){
    Pixel* punteroPix=epdp->punteroPix;
    int cantidadPixeles=epdp->cantidadPixeles;
-   int umbral=epdp.umbral;
+   int umbral=epdp->umbral;
    int i;
    float porcentajeBlanco;
    Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
@@ -359,7 +359,7 @@ void pixeles_binario(EstructuraProcesadorDePixeles* epdp){
          punteroPixelesBinario[i].green=0;
          punteroPixelesBinario[i].blue=0;
       }
-
+   ep->pixelesbinario = punteroPixelesBinario;
    }
    
 }
