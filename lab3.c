@@ -59,14 +59,19 @@ void main(int argc, char *argv[]){
     strcat(nombreImagenSalidaBinario, ".bmp");
     pthread_create(&hebras[0], NULL, (void*) &leerImagen, (void*) numeroDeImagen);
     pthread_join(hebras[0], NULL);
-    printf("funciona %s\n", ep->estructura->par[0]);
-    printf("cantidad_de_pares: %i \n", ep->estructura->cantidadDePares);
-    printf("largo: %i \n", ep->estructura->largo);
-    printf("LLEGA\n");
+    
     cortarEInvertirArreglo(ep->estructura);
+    ep->pixeles = (Pixel*)malloc(sizeof(Pixel));
+    ep->pixeles = crearArregloPixeles(ep->estructura);
+    printf("LLEGA\n");
+    for (int k = 0; k < 100; ++k)
+    {
+      printf("EL PAR ES: %i\n", ep->pixeles[k].red);
+      
+    }
     epdp->cantidadPixeles=ep->estructura->cantidadDePares/4;
     epdp->umbral=50;
-    ep->pixeles = crearArregloPixeles(ep->estructura);
+    epdp->punteroPix=ep->pixeles;
     pixeles_blanco_y_negro(epdp);
     pixeles_binario(epdp);
     printf("PASA POR AQUI\n");

@@ -328,7 +328,9 @@ void pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
    Pixel* punteroPixelesBlancoYNegro=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
    for(i=0;i<cantidadPixeles;i++){
       punteroPixelesBlancoYNegro[i]=pixel_a_negro(punteroPix[i]);
+      printf("%i\n", punteroPixelesBlancoYNegro[i].red);
    }
+   ep->pixelesbn = (Pixel*)malloc(sizeof(Pixel));
    ep->pixelesbn = punteroPixelesBlancoYNegro;
 }
 
