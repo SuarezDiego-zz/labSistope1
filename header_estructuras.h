@@ -21,20 +21,32 @@ typedef struct{
    int umbral;
 }EstructuraProcesadorDePixeles;
 
+typedef struct{
+   Pixel* pixeles;
+   Pixel* pixelesbn;
+   Pixel* pixelesbinario;
+   Estructura* estructura;
+   char numeroDeImagen[50];
+   char nombreImagenSalidaBinario[50];
+   char nombreImagenSalidaEscalaG[50];
+}EstructuraPrincipal;
+
 Estructura* arr = NULL;
+EstructuraPrincipal* ep = NULL;
+EstructuraProcesadorDePixeles* epdp = NULL;
 unsigned long contHebrasNearlyBlack=0;
 int resultadoNearlyBlack=0;
 int pixelesXhebra=0;
 unsigned long cantidadPixelesNegros=0;
 pthread_mutex_t lock;
 int cantidad_hebras = 0;
-pthread_t hebras[];
+
 /*
 Cabeceras de funciones
 */
 long calcularTamano(char* nombreArchivo);
 void leerImagen(void* nombreArchivo);
-Estructura* cortarEInvertirArreglo(Estructura* estr);
+void cortarEInvertirArreglo(Estructura* estr);
 int stringAHexadecimal(char* stringEntrada);
 Pixel* crearArregloPixeles(Estructura* estr);
 Pixel pixel_a_negro(Pixel pix);
@@ -79,7 +91,7 @@ Descripcion: Funcion encargada de leer los bytes de la imagen y guardalos en un 
 una imagen por pantalla.
 */
 void leerImagen(void* nombreArchivo){
-   arr = (Estructura*)malloc(sizeof(Estructura));
+   ep->estructura = (Estructura*)malloc(sizeof(Estructura));
    char* _nombreArchivo = (char*) nombreArchivo;
    int x;
    int j=0;
@@ -97,16 +109,16 @@ void leerImagen(void* nombreArchivo){
    for(x=0;x<largo*4;x++){
         par[x]=(char *) malloc(sizeof(char)*2);
    }
-    arr->par = par;
+    ep->estructura->par = par;
    while (!feof(archivoEntrada)) {
       sprintf(par[j],"%02x",fgetc(archivoEntrada));
       par[j][2]= '\0';
       j++;
    }  
    par[j-1]='\0';
-   arr->cantidadDePares = j-1;
+   ep->estructura->cantidadDePares = j-1;
    fclose(archivoEntrada);
-   arr->largo = largo;
+   ep->estructura->largo = largo;
 }
 
 /*
@@ -115,7 +127,7 @@ Salida: Misma estructura que entra pero con un arreglo adicional que contiene lo
 la cabecera.
 Descripcion: Funcion que recorre para cortar e invertir el orden de los pixeles en un nuevo arreglo.
 */
-Estructura* cortarEInvertirArreglo(Estructura* estr){
+void cortarEInvertirArreglo(Estructura* estr){
    int j=0;
    int i;
    char **arregloBytesOrdenado = (char **) malloc(sizeof(char *)*estr->cantidadDePares);
@@ -128,8 +140,11 @@ Estructura* cortarEInvertirArreglo(Estructura* estr){
    }
    estr->cantidadDePares = estr->cantidadDePares - 138;
    estr->arregloBytesOrdenado=arregloBytesOrdenado;
+   ep->estructura->arregloBytesOrdenado = estr->arregloBytesOrdenado;
+   ep->estructura->cantidadDePares = estr->cantidadDePares;
+   epdp->punteroPix = estr->arregloBytesOrdenado;
    //free(estr->arregloBytes);
-   return estr;
+   
 }
 
 /*
@@ -306,9 +321,9 @@ Entrada: Arreglo con pixeles y la cantidad de pixeles
 Salida: Arreglo con todos los pixeles convertidos a escala de grises.
 Descripcion: Funcion que transforma todos los pixeles de un arreglo a una escala de grises.
 */
-Pixel* pixeles_blanco_y_negro(EstructuraProcesadorDePixeles epdp){
-   Pixel* punteroPix=epdp.punteroPix;
-   int cantidadPixeles=epdp.cantidadPixeles;
+Pixel* pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
+   Pixel* punteroPix=epdp->punteroPix;
+   int cantidadPixeles=epdp->cantidadPixeles;
    int i;
    Pixel* punteroPixelesBlancoYNegro=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
    for(i=0;i<cantidadPixeles;i++){
@@ -324,9 +339,9 @@ Descripcion: Funcion que transforma todos los pixeles de un arreglo a una imagen
 que contiene solo los colores blanco y negro. Esto depende de si el color esta por sobre el umbral
 entonces el pixel sera blanco, en caso contrario, es negro.
 */
-Pixel* pixeles_binario(EstructuraProcesadorDePixeles epdp){
-   Pixel* punteroPix=epdp.punteroPix;
-   int cantidadPixeles=epdp.cantidadPixeles;
+void pixeles_binario(EstructuraProcesadorDePixeles* epdp){
+   Pixel* punteroPix=epdp->punteroPix;
+   int cantidadPixeles=epdp->cantidadPixeles;
    int umbral=epdp.umbral;
    int i;
    float porcentajeBlanco;
@@ -346,7 +361,7 @@ Pixel* pixeles_binario(EstructuraProcesadorDePixeles epdp){
       }
 
    }
-   return punteroPixelesBinario;
+   
 }
 
 /*
@@ -374,9 +389,9 @@ void nearlyBlack(void*  _epdp){
       }
    }
 
-   for(j=1;j<=cantidad_hebras;j++){//con j=1 o j=0?
+   /*for(j=1;j<=cantidad_hebras;j++){//con j=1 o j=0?
       pthread_join(hebras[j], NULL);
-   }
+   }*/
 
    if((cantidadPixelesNegros*100)>((cantidadPixeles-cantidadPixelesNegros)*100)){
       resultadoNearlyBlack=1;

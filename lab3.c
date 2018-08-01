@@ -9,9 +9,9 @@ void main(int argc, char *argv[]){
 	int cantidad, umbral_b, umbral_nb;
   int bandera = 0;
   int opt;
-  char numeroDeImagen[100];
-  char nombreImagenSalidaBinario[100];
-  char nombreImagenSalidaEscalaG[100];
+  char numeroDeImagen[50];
+  char nombreImagenSalidaBinario[50];
+  char nombreImagenSalidaEscalaG[50];
   char contador[2];
   strcpy(numeroDeImagen, "");
   strcpy(nombreImagenSalidaBinario, "");
@@ -42,8 +42,10 @@ void main(int argc, char *argv[]){
   if (bandera == 1){
     printf("imagen        nearly black\n");
   }
-  cantidad_hebras=1;//2 hebras -------------------------papeo
-  hebras[cantidad_hebras];
+  cantidad_hebras=2;//2 hebras -------------------------papeo
+  pthread_t hebras[cantidad_hebras];
+  ep =(EstructuraPrincipal*)malloc(sizeof(EstructuraPrincipal));
+  epdp =(EstructuraProcesadorDePixeles*)malloc(sizeof(EstructuraProcesadorDePixeles));
   for (int i = 0; i < cantidad; i++){
     sprintf(contador, "%d", i+1);
     strcat(numeroDeImagen, imagen);
@@ -57,12 +59,16 @@ void main(int argc, char *argv[]){
     strcat(nombreImagenSalidaBinario, ".bmp");
     pthread_create(&hebras[0], NULL, (void*) &leerImagen, (void*) numeroDeImagen);
     pthread_join(hebras[0], NULL);
-    printf("funciona %s\n", arr->par[0]);
+    printf("funciona %s\n", ep->estructura->par[0]);
+    printf("cantidad_de_pares: %i \n", ep->estructura->cantidadDePares);
+    printf("largo: %i \n", ep->estructura->largo);
     printf("LLEGA\n");
-    //es=cortarEInvertirArreglo(es);
-    //Pixel* pixeles=crearArregloPixeles(es->arregloBytesOrdenado,es->cantidadDePares/4);
-    //Pixel* pixelesbn=pixeles_blanco_y_negro(pixeles,es->cantidadDePares/4);
-    //Pixel* pixelesbinario=pixeles_binario(pixeles,es->cantidadDePares/4,umbral_b);
+    cortarEInvertirArreglo(ep->estructura);
+    epdp->cantidadPixeles=ep->estructura->cantidadDePares/4;
+    epdp->umbral=50;
+    ep->pixeles = crearArregloPixeles(ep->estructura);
+    pixeles_blanco_y_negro(epdp);
+    pixeles_binario(epdp);
     //escribirImagen(pixelesbn,es,nombreImagenSalidaEscalaG);
     //escribirImagen(pixelesbinario,es,nombreImagenSalidaBinario);
     /*if (bandera == 1){
@@ -81,17 +87,14 @@ void main(int argc, char *argv[]){
     
     int j;
     pthread_mutex_init(&lock, NULL);
-    arr=cortarEInvertirArreglo(arr);
-    Pixel* pixeles=crearArregloPixeles(arr);
-    EstructuraProcesadorDePixeles* epdp=(EstructuraProcesadorDePixeles*)malloc(sizeof(EstructuraProcesadorDePixeles));;
+    cortarEInvertirArreglo(ep->estructura);
+    Pixel* pixeles=crearArregloPixeles(ep->estructura);
     epdp->punteroPix=pixeles;
-    epdp->cantidadPixeles=arr->cantidadDePares/4;
-    epdp->umbral=50;
     pixelesXhebra= epdp->cantidadPixeles/(cantidad_hebras+1);
     printf("cantidadPixeles%i\n",epdp->cantidadPixeles);
     printf("pixelesXhebra%i\n",pixelesXhebra);
     printf("cantidad de hebras%i\n",(cantidad_hebras+1) );
-    for(j=0;j<=cantidad_hebras;j++){
+    for(j=1;j<=cantidad_hebras;j++){
       pthread_create(&hebras[j], NULL, (void*) &nearlyBlack, (void*) epdp);
     }
     for(j=0;j<=cantidad_hebras;j++){
