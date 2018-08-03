@@ -42,7 +42,7 @@ void main(int argc, char *argv[]){
   if (bandera == 1){
     printf("imagen        nearly black\n");
   }
-  cantidad_hebras=3;//2 hebras -------------------------papeo
+  cantidad_hebras=20;//20 hebras -------------------------papeo
   pthread_t hebras[cantidad_hebras];
   ep =(EstructuraPrincipal*)malloc(sizeof(EstructuraPrincipal));
   epdp =(EstructuraProcesadorDePixeles*)malloc(sizeof(EstructuraProcesadorDePixeles));
@@ -99,24 +99,25 @@ void main(int argc, char *argv[]){
     Pixel* pixeles=crearArregloPixeles(ep->estructura);
     epdp->punteroPix=pixeles;
 
-    if((cantidad_hebras+1)>epdp->cantidadPixeles){
+    if((cantidad_hebras)>epdp->cantidadPixeles){
       pixelesXhebra=1;
       topeLanzamiento=epdp->cantidadPixeles;
     }
     else{
-      topeLanzamiento=cantidad_hebras+1;
-      pixelesXhebra= epdp->cantidadPixeles/(cantidad_hebras+1);
+      topeLanzamiento=cantidad_hebras;
+      pixelesXhebra= epdp->cantidadPixeles/(cantidad_hebras);
     }
-    if(epdp->cantidadPixeles%(cantidad_hebras+1)>0){
-      pixelesXhebraDeLaPrimera=pixelesXhebra+(epdp->cantidadPixeles%(cantidad_hebras+1));
+    if(epdp->cantidadPixeles%(cantidad_hebras)>0){
+      pixelesXhebraDeLaPrimera=pixelesXhebra+(epdp->cantidadPixeles%(cantidad_hebras));
     }
     else{
       pixelesXhebraDeLaPrimera=pixelesXhebra;
     }
   
-    printf("cantidadPixeles%i\n",epdp->cantidadPixeles);
-    printf("pixelesXhebra%i\n",pixelesXhebra);
-    printf("cantidad de hebras%i\n",(cantidad_hebras+1) );
+    printf("cantidadPixeles=%i\n",epdp->cantidadPixeles);
+    printf("pixelesXhebra=%i\n",pixelesXhebra);
+    printf("pixelesXhebraDeLaPrimera=%i\n",pixelesXhebraDeLaPrimera);
+    printf("cantidad de hebras en nearlyBlack=%i\n",(cantidad_hebras) );
     for(j=0;j<cantidad_hebras;j++){
       pthread_create(&hebras[j], NULL, (void*) &nearlyBlack, (void*) epdp);
     }
