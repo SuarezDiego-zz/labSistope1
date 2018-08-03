@@ -37,6 +37,7 @@ EstructuraProcesadorDePixeles* epdp = NULL;
 unsigned long contHebrasNearlyBlack=0;
 int resultadoNearlyBlack=0;
 int pixelesXhebra=0;
+int pixelesXhebraDeLaPrimera=0;
 unsigned long cantidadPixelesNegros=0;
 pthread_mutex_t lock;
 int cantidad_hebras = 0;
@@ -376,10 +377,16 @@ void nearlyBlack(void*  _epdp){
    Pixel* punteroPix=epdp->punteroPix;
    int cantidadPixeles=epdp->cantidadPixeles;
    int umbral=epdp->umbral;
-   long i,j;
+   long i,j,tope;
    float porcentajeBlanco;
    pthread_mutex_lock(&lock);
    contHebrasNearlyBlack++;
+   if(contHebrasNearlyBlack==1){
+      tope=pixelesXhebraDeLaPrimera;
+   }
+   else{
+      tope=pixelesXhebra;
+   }
    pthread_mutex_unlock(&lock);
    printf("cont hebras %i\n", contHebrasNearlyBlack);
    for(i=((contHebrasNearlyBlack-1)*pixelesXhebra);i<contHebrasNearlyBlack*pixelesXhebra;i++){
