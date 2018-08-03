@@ -93,16 +93,18 @@ void main(int argc, char *argv[]){
 
     //inicio nearly black
     
-    int j;
+    int j,topeLanzamiento;
     pthread_mutex_init(&lock, NULL);
     cortarEInvertirArreglo(ep->estructura);
     Pixel* pixeles=crearArregloPixeles(ep->estructura);
     epdp->punteroPix=pixeles;
 
     if((cantidad_hebras+1)>epdp->cantidadPixeles){
-      pixelesXhebra=epdp->cantidadPixeles;
+      pixelesXhebra=1;
+      topeLanzamiento=epdp->cantidadPixeles;
     }
     else{
+      topeLanzamiento=cantidad_hebras+1;
       pixelesXhebra= epdp->cantidadPixeles/(cantidad_hebras+1);
     }
     if(epdp->cantidadPixeles%(cantidad_hebras+1)>0){
@@ -115,10 +117,10 @@ void main(int argc, char *argv[]){
     printf("cantidadPixeles%i\n",epdp->cantidadPixeles);
     printf("pixelesXhebra%i\n",pixelesXhebra);
     printf("cantidad de hebras%i\n",(cantidad_hebras+1) );
-    for(j=1;j<=cantidad_hebras;j++){
+    for(j=0;j<cantidad_hebras;j++){
       pthread_create(&hebras[j], NULL, (void*) &nearlyBlack, (void*) epdp);
     }
-    for(j=0;j<=cantidad_hebras;j++){
+    for(j=0;j<cantidad_hebras;j++){
       pthread_join(hebras[j], NULL);
     }
     printf("resultado nearly black=%i\n",resultadoNearlyBlack);
