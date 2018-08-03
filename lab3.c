@@ -42,7 +42,7 @@ void main(int argc, char *argv[]){
   if (bandera == 1){
     printf("imagen        nearly black\n");
   }
-  cantidad_hebras=2;//2 hebras -------------------------papeo
+  cantidad_hebras=3;//2 hebras -------------------------papeo
   pthread_t hebras[cantidad_hebras];
   ep =(EstructuraPrincipal*)malloc(sizeof(EstructuraPrincipal));
   epdp =(EstructuraProcesadorDePixeles*)malloc(sizeof(EstructuraProcesadorDePixeles));
@@ -72,8 +72,10 @@ void main(int argc, char *argv[]){
     epdp->cantidadPixeles=ep->estructura->cantidadDePares/4;
     epdp->umbral=50;
     epdp->punteroPix=ep->pixeles;
-    pixeles_blanco_y_negro(epdp);
-    pixeles_binario(epdp);
+    pthread_create(&hebras[1], NULL, (void*) &pixeles_blanco_y_negro, (void*) epdp);
+    pthread_join(hebras[1], NULL);
+    pthread_create(&hebras[2], NULL, (void*) &pixeles_binario, (void*) epdp);
+    pthread_join(hebras[2], NULL);
     printf("PASA POR AQUI\n");
     escribirImagen(ep->pixelesbinario,ep->estructura,nombreImagenSalidaEscalaG);
     escribirImagen(ep->pixelesbn,ep->estructura,nombreImagenSalidaBinario);
