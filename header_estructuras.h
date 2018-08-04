@@ -40,8 +40,9 @@ int resultadoNearlyBlack=0;
 int pixelesXhebra=0;
 int pixelesXhebraDeLaPrimera=0;
 unsigned long cantidadPixelesNegros=0;
-pthread_mutex_t lock;
+pthread_mutex_t lock,lockNearlyBlack,lockHebrasNB;
 int cantidad_hebras = 0;
+int ancho=0;
 
 /*
 Cabeceras de funciones
@@ -377,20 +378,23 @@ void nearlyBlack(void*  _epdp){
    Pixel* punteroPix=epdp->punteroPix;
    int cantidadPixeles=epdp->cantidadPixeles;
    int umbral=epdp->umbral_nb;
-   umbral=10;
-   long i,j,tope;
+   long i,j;
+   long topeS=0;
+   long topeI=0;
    float porcentajeBlanco;
-   pthread_mutex_lock(&lock);
+   pthread_mutex_lock(&lockHebrasNB);
    contHebrasNearlyBlack++;
    if(contHebrasNearlyBlack==1){
-      tope=pixelesXhebraDeLaPrimera;
+      topeS=pixelesXhebraDeLaPrimera;
    }
    else{
-      tope=pixelesXhebra;
+      topeI=(contHebrasNearlyBlack-2)*pixelesXhebra+pixelesXhebraDeLaPrimera;
+      topeS=(contHebrasNearlyBlack-1)*pixelesXhebra+pixelesXhebraDeLaPrimera;
    }
-   pthread_mutex_unlock(&lock);
+   //printf("I=%d S=%d\n",topeI,topeS);
    printf("cont hebras %i\n", contHebrasNearlyBlack);
-   for(i=((contHebrasNearlyBlack-1)*pixelesXhebra);i<contHebrasNearlyBlack*pixelesXhebra;i++){
+   pthread_mutex_unlock(&lockHebrasNB);
+   for(i=topeI;i<topeS;i++){
       porcentajeBlanco=(100*(punteroPix[i].red*0.3+punteroPix[i].green*0.59+punteroPix[i].blue*0.11))/255;
       if(porcentajeBlanco<=umbral){
          pthread_mutex_lock(&lock);
@@ -398,17 +402,14 @@ void nearlyBlack(void*  _epdp){
          pthread_mutex_unlock(&lock);
       }
    }
-
-   /*for(j=1;j<=cantidad_hebras;j++){//con j=1 o j=0?
-      pthread_join(hebras[j], NULL);
-   }*/
-
+   pthread_mutex_lock(&lockNearlyBlack);
    if((cantidadPixelesNegros*100)>((cantidadPixeles-cantidadPixelesNegros)*100)){
       resultadoNearlyBlack=1;
    }
    else{
       resultadoNearlyBlack=0;
    }
+   pthread_mutex_unlock(&lockNearlyBlack);
 }
 
 /*
