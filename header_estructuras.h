@@ -19,6 +19,7 @@ typedef struct{
    Pixel* punteroPix;
    int cantidadPixeles;
    int umbral;
+   int umbral_nb;
 }EstructuraProcesadorDePixeles;
 
 typedef struct{
@@ -329,7 +330,6 @@ void pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
    Pixel* punteroPixelesBlancoYNegro=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
    for(i=0;i<cantidadPixeles;i++){
       punteroPixelesBlancoYNegro[i]=pixel_a_negro(punteroPix[i]);
-      printf("%i\n", punteroPixelesBlancoYNegro[i].red);
    }
    ep->pixelesbn = (Pixel*)malloc(sizeof(Pixel));
    ep->pixelesbn = punteroPixelesBlancoYNegro;
@@ -376,7 +376,8 @@ void nearlyBlack(void*  _epdp){
    EstructuraProcesadorDePixeles* epdp = (EstructuraProcesadorDePixeles*) _epdp;
    Pixel* punteroPix=epdp->punteroPix;
    int cantidadPixeles=epdp->cantidadPixeles;
-   int umbral=epdp->umbral;
+   int umbral=epdp->umbral_nb;
+   umbral=10;
    long i,j,tope;
    float porcentajeBlanco;
    pthread_mutex_lock(&lock);

@@ -44,6 +44,8 @@ void main(int argc, char *argv[]){
   }
   cantidad_hebras=20;//20 hebras -------------------------papeo
   pthread_t hebras[cantidad_hebras];
+  pthread_barrier_t barrier;
+  pthread_barrier_init(&barrier, NULL, 1);
   ep =(EstructuraPrincipal*)malloc(sizeof(EstructuraPrincipal));
   epdp =(EstructuraProcesadorDePixeles*)malloc(sizeof(EstructuraProcesadorDePixeles));
   for (int i = 0; i < cantidad; i++){
@@ -63,20 +65,14 @@ void main(int argc, char *argv[]){
     cortarEInvertirArreglo(ep->estructura);
     ep->pixeles = (Pixel*)malloc(sizeof(Pixel));
     ep->pixeles = crearArregloPixeles(ep->estructura);
-    printf("LLEGA\n");
-    for (int k = 0; k < 100; ++k)
-    {
-      printf("EL PAR ES: %i\n", ep->pixeles[k].red);
-      
-    }
     epdp->cantidadPixeles=ep->estructura->cantidadDePares/4;
-    epdp->umbral=50;
+    epdp->umbral = 50;
+    epdp->umbral_nb = 50;
     epdp->punteroPix=ep->pixeles;
     pthread_create(&hebras[1], NULL, (void*) &pixeles_blanco_y_negro, (void*) epdp);
-    pthread_join(hebras[1], NULL);
+    pthread_barrier_wait(&barrier);
     pthread_create(&hebras[2], NULL, (void*) &pixeles_binario, (void*) epdp);
     pthread_join(hebras[2], NULL);
-    printf("PASA POR AQUI\n");
     escribirImagen(ep->pixelesbinario,ep->estructura,nombreImagenSalidaEscalaG);
     escribirImagen(ep->pixelesbn,ep->estructura,nombreImagenSalidaBinario);
     /*if (bandera == 1){
