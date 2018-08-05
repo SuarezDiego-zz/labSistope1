@@ -45,6 +45,9 @@ unsigned long cantidadPixelesNegros=0;
 pthread_mutex_t lock,lockNearlyBlack,lockHebras;
 int cantidad_hebras = 0;
 int ancho=0;
+pthread_barrier_t barrier;
+pthread_barrier_t barrier2;
+pthread_barrier_t barrier3;
 
 /*
 Cabeceras de funciones
@@ -108,8 +111,7 @@ void leerImagen(void* nombreArchivo){
    {
       printf("No se ha encontrado imagen. \n");
       exit(1);
-   }
-   unsigned char auxInt;   
+   } 
    char **par = (char **) malloc(sizeof(char *)*largo*4);
    for(x=0;x<largo*4;x++){
         par[x]=(char *) malloc(sizeof(char)*2);
@@ -147,7 +149,7 @@ void cortarEInvertirArreglo(Estructura* estr){
    estr->arregloBytesOrdenado=arregloBytesOrdenado;
    ep->estructura->arregloBytesOrdenado = estr->arregloBytesOrdenado;
    ep->estructura->cantidadDePares = estr->cantidadDePares;
-   epdp->punteroPix = estr->arregloBytesOrdenado;
+   //epdp->punteroPix = estr->arregloBytesOrdenado;
    //free(estr->arregloBytes);
    
 }
@@ -328,11 +330,9 @@ Descripcion: Funcion que transforma todos los pixeles de un arreglo a una escala
 */
 void pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
    Pixel* punteroPix=epdp->punteroPix;
-   int cantidadPixeles=epdp->cantidadPixeles;
    long i;
    long topeS=0;
    long topeI=0;
-   ep->pixelesbn=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
    pthread_mutex_lock(&lockHebras);
    contHebrasBlancoYNegro++;
    if(contHebrasBlancoYNegro==1){
@@ -346,8 +346,8 @@ void pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
    for(i=topeI;i<topeS;i++){
       ep->pixelesbn[i]=pixel_a_negro(punteroPix[i]);
    }
-   printf("ME EJECUTE UNA VEZ\n");
-   //pthread_barrier_wait(&barrier);
+   //printf("ME EJECUTE UNA VEZ\n");
+   pthread_barrier_wait(&barrier);
 }
 
 /*
@@ -359,13 +359,11 @@ entonces el pixel sera blanco, en caso contrario, es negro.
 */
 void pixeles_binario(EstructuraProcesadorDePixeles* epdp){
    Pixel* punteroPix=epdp->punteroPix;
-   int cantidadPixeles=epdp->cantidadPixeles;
    int umbral=epdp->umbral;
    int i;
    long topeS=0;
    long topeI=0;
    float porcentajeBlanco;
-   ep->pixelesbinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
    pthread_mutex_lock(&lockHebras);
    contHebrasBinario++;
    if(contHebrasBinario==1){
@@ -377,8 +375,8 @@ void pixeles_binario(EstructuraProcesadorDePixeles* epdp){
    }
    pthread_mutex_unlock(&lockHebras);
    for(i=topeI;i<topeS;i++){
-      ep->pixelesbinario[i]=pixel_a_negro(punteroPix[i]);
-      porcentajeBlanco=(100*ep->pixelesbinario[i].red)/255;
+      porcentajeBlanco=(100*(punteroPix[i].red*0.3+punteroPix[i].green*0.59+punteroPix[i].blue*0.11))/255;
+      ep->pixelesbinario[i].v=punteroPix[i].v;
       if(porcentajeBlanco>umbral){
          ep->pixelesbinario[i].red=255;
          ep->pixelesbinario[i].green=255;
@@ -389,8 +387,8 @@ void pixeles_binario(EstructuraProcesadorDePixeles* epdp){
          ep->pixelesbinario[i].green=0;
          ep->pixelesbinario[i].blue=0;
       }
-   //pthread_barrier_wait(&barrier2);
    }
+   pthread_barrier_wait(&barrier2);
    
 }
 
@@ -404,7 +402,7 @@ void nearlyBlack(void*  _epdp){
    Pixel* punteroPix=epdp->punteroPix;
    int cantidadPixeles=epdp->cantidadPixeles;
    int umbral=epdp->umbral_nb;
-   long i,j;
+   long i;
    long topeS=0;
    long topeI=0;
    float porcentajeBlanco;
@@ -418,7 +416,7 @@ void nearlyBlack(void*  _epdp){
       topeS=(contHebrasNearlyBlack-1)*pixelesXhebra+pixelesXhebraDeLaPrimera;
    }
    //printf("I=%d S=%d\n",topeI,topeS);
-   printf("cont hebras %i\n", contHebrasNearlyBlack);
+   //printf("cont hebras %i\n", contHebrasNearlyBlack);
    pthread_mutex_unlock(&lockHebras);
    for(i=topeI;i<topeS;i++){
       porcentajeBlanco=(100*(punteroPix[i].red*0.3+punteroPix[i].green*0.59+punteroPix[i].blue*0.11))/255;
@@ -436,6 +434,7 @@ void nearlyBlack(void*  _epdp){
       resultadoNearlyBlack=0;
    }
    pthread_mutex_unlock(&lockNearlyBlack);
+   pthread_barrier_wait(&barrier3);
 }
 
 /*
