@@ -335,6 +335,7 @@ void pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
    ep->pixelesbn = (Pixel*)malloc(sizeof(Pixel));
    ep->pixelesbn = punteroPixelesBlancoYNegro;
    printf("ME EJECUTE UNA VEZ\n");
+   pthread_barrier_wait(&barrier);
 }
 
 /*
@@ -365,6 +366,7 @@ void pixeles_binario(EstructuraProcesadorDePixeles* epdp){
          punteroPixelesBinario[i].blue=0;
       }
    ep->pixelesbinario = punteroPixelesBinario;
+   pthread_barrier_wait(&barrier2);
    }
    
 }

@@ -47,8 +47,8 @@ void main(int argc, char *argv[]){
   pthread_barrier_t barrier;
   pthread_barrier_t barrier2;
   int j,topeLanzamiento,auxpxh;
-  pthread_barrier_init(&barrier, NULL, 1);
-  pthread_barrier_init(&barrier2, NULL, 1);
+  pthread_barrier_init(&barrier, NULL, cantidad_hebras+1);
+  pthread_barrier_init(&barrier2, NULL, cantidad_hebras+1);
   //pthread_barrier_init(&barrier2, NULL, 1);
   ep =(EstructuraPrincipal*)malloc(sizeof(EstructuraPrincipal));
   epdp =(EstructuraProcesadorDePixeles*)malloc(sizeof(EstructuraProcesadorDePixeles));
@@ -97,14 +97,11 @@ void main(int argc, char *argv[]){
     for(j=0;j<topeLanzamiento;j++){
       pthread_create(&hebras[j], NULL, (void*) &pixeles_blanco_y_negro, (void*) epdp);
     }
-    printf("ANTES DEL BARRIER\n");
     pthread_barrier_wait(&barrier);
     pthread_barrier_destroy(&barrier);
-    printf("LUEGO DEL BARRIER\n");
     for(j=0;j<topeLanzamiento;j++){
       pthread_create(&hebras[j], NULL, (void*) &pixeles_binario, (void*) epdp);
     }
-    //pthread_barrier_wait(&barrier2);
     pthread_barrier_wait(&barrier2);
     pthread_barrier_destroy(&barrier2);
     escribirImagen(ep->pixelesbinario,ep->estructura,nombreImagenSalidaEscalaG);
