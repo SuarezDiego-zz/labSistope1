@@ -36,11 +36,13 @@ Estructura* arr = NULL;
 EstructuraPrincipal* ep = NULL;
 EstructuraProcesadorDePixeles* epdp = NULL;
 unsigned long contHebrasNearlyBlack=0;
+unsigned long contHebrasBlancoYNegro=0;
+unsigned long contHebrasBinario=0;
 int resultadoNearlyBlack=0;
 int pixelesXhebra=0;
 int pixelesXhebraDeLaPrimera=0;
 unsigned long cantidadPixelesNegros=0;
-pthread_mutex_t lock,lockNearlyBlack,lockHebrasNB;
+pthread_mutex_t lock,lockNearlyBlack,lockHebras;
 int cantidad_hebras = 0;
 int ancho=0;
 
@@ -327,15 +329,25 @@ Descripcion: Funcion que transforma todos los pixeles de un arreglo a una escala
 void pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
    Pixel* punteroPix=epdp->punteroPix;
    int cantidadPixeles=epdp->cantidadPixeles;
-   int i;
-   Pixel* punteroPixelesBlancoYNegro=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
-   for(i=0;i<cantidadPixeles;i++){
-      punteroPixelesBlancoYNegro[i]=pixel_a_negro(punteroPix[i]);
+   long i;
+   long topeS=0;
+   long topeI=0;
+   ep->pixelesbn=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
+   pthread_mutex_lock(&lockHebras);
+   contHebrasBlancoYNegro++;
+   if(contHebrasBlancoYNegro==1){
+      topeS=pixelesXhebraDeLaPrimera;
    }
-   ep->pixelesbn = (Pixel*)malloc(sizeof(Pixel));
-   ep->pixelesbn = punteroPixelesBlancoYNegro;
+   else{
+      topeI=(contHebrasBlancoYNegro-2)*pixelesXhebra+pixelesXhebraDeLaPrimera;
+      topeS=(contHebrasBlancoYNegro-1)*pixelesXhebra+pixelesXhebraDeLaPrimera;
+   }
+   pthread_mutex_unlock(&lockHebras);
+   for(i=topeI;i<topeS;i++){
+      ep->pixelesbn[i]=pixel_a_negro(punteroPix[i]);
+   }
    printf("ME EJECUTE UNA VEZ\n");
-   pthread_barrier_wait(&barrier);
+   //pthread_barrier_wait(&barrier);
 }
 
 /*
@@ -350,23 +362,34 @@ void pixeles_binario(EstructuraProcesadorDePixeles* epdp){
    int cantidadPixeles=epdp->cantidadPixeles;
    int umbral=epdp->umbral;
    int i;
+   long topeS=0;
+   long topeI=0;
    float porcentajeBlanco;
-   Pixel* punteroPixelesBinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
-   for(i=0;i<cantidadPixeles;i++){
-      punteroPixelesBinario[i]=pixel_a_negro(punteroPix[i]);
-      porcentajeBlanco=(100*punteroPixelesBinario[i].red)/255;
+   ep->pixelesbinario=(Pixel*)malloc(cantidadPixeles*sizeof(Pixel));
+   pthread_mutex_lock(&lockHebras);
+   contHebrasBinario++;
+   if(contHebrasBinario==1){
+      topeS=pixelesXhebraDeLaPrimera;
+   }
+   else{
+      topeI=(contHebrasBinario-2)*pixelesXhebra+pixelesXhebraDeLaPrimera;
+      topeS=(contHebrasBinario-1)*pixelesXhebra+pixelesXhebraDeLaPrimera;
+   }
+   pthread_mutex_unlock(&lockHebras);
+   for(i=topeI;i<topeS;i++){
+      ep->pixelesbinario[i]=pixel_a_negro(punteroPix[i]);
+      porcentajeBlanco=(100*ep->pixelesbinario[i].red)/255;
       if(porcentajeBlanco>umbral){
-         punteroPixelesBinario[i].red=255;
-         punteroPixelesBinario[i].green=255;
-         punteroPixelesBinario[i].blue=255;
+         ep->pixelesbinario[i].red=255;
+         ep->pixelesbinario[i].green=255;
+         ep->pixelesbinario[i].blue=255;
       }
       else{
-         punteroPixelesBinario[i].red=0;
-         punteroPixelesBinario[i].green=0;
-         punteroPixelesBinario[i].blue=0;
+         ep->pixelesbinario[i].red=0;
+         ep->pixelesbinario[i].green=0;
+         ep->pixelesbinario[i].blue=0;
       }
-   ep->pixelesbinario = punteroPixelesBinario;
-   pthread_barrier_wait(&barrier2);
+   //pthread_barrier_wait(&barrier2);
    }
    
 }
@@ -385,7 +408,7 @@ void nearlyBlack(void*  _epdp){
    long topeS=0;
    long topeI=0;
    float porcentajeBlanco;
-   pthread_mutex_lock(&lockHebrasNB);
+   pthread_mutex_lock(&lockHebras);
    contHebrasNearlyBlack++;
    if(contHebrasNearlyBlack==1){
       topeS=pixelesXhebraDeLaPrimera;
@@ -396,7 +419,7 @@ void nearlyBlack(void*  _epdp){
    }
    //printf("I=%d S=%d\n",topeI,topeS);
    printf("cont hebras %i\n", contHebrasNearlyBlack);
-   pthread_mutex_unlock(&lockHebrasNB);
+   pthread_mutex_unlock(&lockHebras);
    for(i=topeI;i<topeS;i++){
       porcentajeBlanco=(100*(punteroPix[i].red*0.3+punteroPix[i].green*0.59+punteroPix[i].blue*0.11))/255;
       if(porcentajeBlanco<=umbral){

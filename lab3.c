@@ -47,8 +47,8 @@ void main(int argc, char *argv[]){
   pthread_barrier_t barrier;
   pthread_barrier_t barrier2;
   int j,topeLanzamiento,auxpxh;
-  pthread_barrier_init(&barrier, NULL, cantidad_hebras+1);
-  pthread_barrier_init(&barrier2, NULL, cantidad_hebras+1);
+  pthread_barrier_init(&barrier, NULL, cantidad_hebras);
+  pthread_barrier_init(&barrier2, NULL, cantidad_hebras);
   //pthread_barrier_init(&barrier2, NULL, 1);
   ep =(EstructuraPrincipal*)malloc(sizeof(EstructuraPrincipal));
   epdp =(EstructuraProcesadorDePixeles*)malloc(sizeof(EstructuraProcesadorDePixeles));
@@ -79,6 +79,11 @@ void main(int argc, char *argv[]){
     epdp->umbral = 50;
     epdp->umbral_nb = 10;
     epdp->punteroPix=ep->pixeles;
+
+    pthread_mutex_init(&lock, NULL);
+    pthread_mutex_init(&lockNearlyBlack, NULL);
+    pthread_mutex_init(&lockHebras, NULL);
+
     if((cantidad_hebras)>=cantidadDeFilas){
       pixelesXhebra=ancho;
       topeLanzamiento=cantidadDeFilas;
@@ -97,15 +102,18 @@ void main(int argc, char *argv[]){
     for(j=0;j<topeLanzamiento;j++){
       pthread_create(&hebras[j], NULL, (void*) &pixeles_blanco_y_negro, (void*) epdp);
     }
+    printf("pasa aqui1\n");
     pthread_barrier_wait(&barrier);
     pthread_barrier_destroy(&barrier);
+    printf("pasa aqui2\n");
     for(j=0;j<topeLanzamiento;j++){
       pthread_create(&hebras[j], NULL, (void*) &pixeles_binario, (void*) epdp);
     }
     pthread_barrier_wait(&barrier2);
     pthread_barrier_destroy(&barrier2);
-    escribirImagen(ep->pixelesbinario,ep->estructura,nombreImagenSalidaEscalaG);
-    escribirImagen(ep->pixelesbn,ep->estructura,nombreImagenSalidaBinario);
+
+    escribirImagen(ep->pixelesbinario,ep->estructura,nombreImagenSalidaBinario);
+    escribirImagen(ep->pixelesbn,ep->estructura,nombreImagenSalidaEscalaG);
     
     /*if (bandera == 1){
       if (nearlyBlack(pixeles,es->cantidadDePares/4,umbral_nb) ==1){
@@ -119,13 +127,7 @@ void main(int argc, char *argv[]){
 
 
 
-    //inicio nearly black
-    
-    pthread_mutex_init(&lock, NULL);
-    pthread_mutex_init(&lockNearlyBlack, NULL);
-    pthread_mutex_init(&lockHebrasNB, NULL);
-
-    
+    //inicio nearly black 
   
     printf("cantidadPixeles=%i\n",epdp->cantidadPixeles);
     printf("pixelesXhebra=%i\n",pixelesXhebra);
@@ -134,6 +136,7 @@ void main(int argc, char *argv[]){
     for(j=0;j<topeLanzamiento;j++){
       pthread_create(&hebras[j], NULL, (void*) &nearlyBlack, (void*) epdp);
     }
+
     for(j=0;j<cantidad_hebras;j++){
       pthread_join(hebras[j], NULL);
     }
@@ -141,7 +144,7 @@ void main(int argc, char *argv[]){
     printf("rnegros=%i\n",cantidadPixelesNegros);
     pthread_mutex_destroy(&lock);
     pthread_mutex_destroy(&lockNearlyBlack);
-    pthread_mutex_destroy(&lockHebrasNB);
+    pthread_mutex_destroy(&lockHebras);
 
     //fin nearly black
 
