@@ -45,7 +45,11 @@ void main(int argc, char *argv[]){
   cantidad_hebras=20;//20 hebras -------------------------papeo
   pthread_t hebras[cantidad_hebras];
   pthread_barrier_t barrier;
+  pthread_barrier_t barrier2;
+  int j,topeLanzamiento,auxpxh;
   pthread_barrier_init(&barrier, NULL, 1);
+  pthread_barrier_init(&barrier2, NULL, 1);
+  //pthread_barrier_init(&barrier2, NULL, 1);
   ep =(EstructuraPrincipal*)malloc(sizeof(EstructuraPrincipal));
   epdp =(EstructuraProcesadorDePixeles*)malloc(sizeof(EstructuraProcesadorDePixeles));
   for (int i = 0; i < cantidad; i++){
@@ -75,11 +79,34 @@ void main(int argc, char *argv[]){
     epdp->umbral = 50;
     epdp->umbral_nb = 10;
     epdp->punteroPix=ep->pixeles;
-
-    pthread_create(&hebras[1], NULL, (void*) &pixeles_blanco_y_negro, (void*) epdp);
+    if((cantidad_hebras)>=cantidadDeFilas){
+      pixelesXhebra=ancho;
+      topeLanzamiento=cantidadDeFilas;
+    }
+    else{
+        topeLanzamiento=cantidad_hebras;
+        auxpxh=(cantidadDeFilas/cantidad_hebras);
+        pixelesXhebra=auxpxh*ancho;
+    }
+    if(cantidadDeFilas%cantidad_hebras>0){
+        pixelesXhebraDeLaPrimera=pixelesXhebra+(cantidadDeFilas%cantidad_hebras)*ancho;
+    }
+    else{
+        pixelesXhebraDeLaPrimera=pixelesXhebra;
+    }
+    for(j=0;j<topeLanzamiento;j++){
+      pthread_create(&hebras[j], NULL, (void*) &pixeles_blanco_y_negro, (void*) epdp);
+    }
+    printf("ANTES DEL BARRIER\n");
     pthread_barrier_wait(&barrier);
-    pthread_create(&hebras[2], NULL, (void*) &pixeles_binario, (void*) epdp);
-    pthread_join(hebras[2], NULL);
+    pthread_barrier_destroy(&barrier);
+    printf("LUEGO DEL BARRIER\n");
+    for(j=0;j<topeLanzamiento;j++){
+      pthread_create(&hebras[j], NULL, (void*) &pixeles_binario, (void*) epdp);
+    }
+    //pthread_barrier_wait(&barrier2);
+    pthread_barrier_wait(&barrier2);
+    pthread_barrier_destroy(&barrier2);
     escribirImagen(ep->pixelesbinario,ep->estructura,nombreImagenSalidaEscalaG);
     escribirImagen(ep->pixelesbn,ep->estructura,nombreImagenSalidaBinario);
     
@@ -97,26 +124,11 @@ void main(int argc, char *argv[]){
 
     //inicio nearly black
     
-    int j,topeLanzamiento,auxpxh;
     pthread_mutex_init(&lock, NULL);
     pthread_mutex_init(&lockNearlyBlack, NULL);
     pthread_mutex_init(&lockHebrasNB, NULL);
 
-    if((cantidad_hebras)>=cantidadDeFilas){
-      pixelesXhebra=ancho;
-      topeLanzamiento=cantidadDeFilas;
-    }
-    else{
-      topeLanzamiento=cantidad_hebras;
-      auxpxh=(cantidadDeFilas/cantidad_hebras);
-      pixelesXhebra=auxpxh*ancho;
-    }
-    if(cantidadDeFilas%cantidad_hebras>0){
-      pixelesXhebraDeLaPrimera=pixelesXhebra+(cantidadDeFilas%cantidad_hebras)*ancho;
-    }
-    else{
-      pixelesXhebraDeLaPrimera=pixelesXhebra;
-    }
+    
   
     printf("cantidadPixeles=%i\n",epdp->cantidadPixeles);
     printf("pixelesXhebra=%i\n",pixelesXhebra);
