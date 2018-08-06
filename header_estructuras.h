@@ -346,7 +346,6 @@ void pixeles_blanco_y_negro(EstructuraProcesadorDePixeles* epdp){
    for(i=topeI;i<topeS;i++){
       ep->pixelesbn[i]=pixel_a_negro(punteroPix[i]);
    }
-   //printf("ME EJECUTE UNA VEZ\n");
    pthread_barrier_wait(&barrier);
 }
 
@@ -415,8 +414,6 @@ void nearlyBlack(void*  _epdp){
       topeI=(contHebrasNearlyBlack-2)*pixelesXhebra+pixelesXhebraDeLaPrimera;
       topeS=(contHebrasNearlyBlack-1)*pixelesXhebra+pixelesXhebraDeLaPrimera;
    }
-   //printf("I=%d S=%d\n",topeI,topeS);
-   //printf("cont hebras %i\n", contHebrasNearlyBlack);
    pthread_mutex_unlock(&lockHebras);
    for(i=topeI;i<topeS;i++){
       porcentajeBlanco=(100*(punteroPix[i].red*0.3+punteroPix[i].green*0.59+punteroPix[i].blue*0.11))/255;
@@ -434,7 +431,6 @@ void nearlyBlack(void*  _epdp){
       resultadoNearlyBlack=0;
    }
    pthread_mutex_unlock(&lockNearlyBlack);
-   pthread_barrier_wait(&barrier3);
 }
 
 /*
